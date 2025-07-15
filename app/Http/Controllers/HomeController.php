@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
+use Auth;
 
 class HomeController extends Controller
 {
@@ -23,6 +25,16 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $user = Auth::user();
+        
+        if ($user->role === 'admin') {
+            return redirect('admin');
+        } elseif ($user->role === 'petugas') {
+            return redirect('petugas');
+        } elseif ($user->role === 'siswa') {
+            return redirect('dashboard/siswa');
+        } else {
+            return abort(403, 'Role tidak dikenal.');
+        }
     }
 }

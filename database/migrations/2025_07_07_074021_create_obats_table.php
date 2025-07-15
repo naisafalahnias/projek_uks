@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nama_obat');
             $table->string('kategori');
             $table->integer('stok');
-            $table->date('tgl_kaldaluarsa');
+            $table->date('tgl_kadaluarsa');
             $table->string('unit');
             $table->text('deskripsi');
             

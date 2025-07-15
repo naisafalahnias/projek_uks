@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'username',
+        'no_hp',
         'password',
         'role',
     ];
@@ -52,15 +53,10 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
-
     public function isPetugas()
     {
         return $this->role === 'petugas';
     }
 
-    public function isSiswa()
-    {
-        return $this->role === 'siswa';
-    }
-
+    
 }

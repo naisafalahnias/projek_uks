@@ -23,18 +23,5 @@ class UsersSeeder extends Seeder
             'role' => 'admin'
         ]);
 
-        User::create([
-            'name' => 'Petugas UKS',
-            'email' => 'petugas@gmail.com',
-            'password' => Hash::make('rahasia'),
-            'role' => 'petugas'
-        ]);
-
-        User::create([
-            'name' => 'Siswa Sehat',
-            'email' => 'siswa@gmail.com',
-            'password' => Hash::make('rahasia'),
-            'role' => 'siswa'
-        ]);
     }
 }
