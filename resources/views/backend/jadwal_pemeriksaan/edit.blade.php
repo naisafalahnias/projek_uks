@@ -1,7 +1,7 @@
 @extends('layouts.backend')
 
 @section('content')
-<div class="col-xxl">
+<div class="container mt-5" style="max-width: 10000px"> {{-- Biar nggak full width --}}
   <div class="card mb-4">
     <div class="card-header d-flex align-items-center justify-content-between">
       <h5 class="mb-0">Ubah Jadwal Pemeriksaan</h5>
@@ -19,7 +19,7 @@
         </div>
       @endif
 
-      <form action="{{ route('jadwal_pemeriksaan.update', $jadwal_pemeriksaan->id) }}" method="POST">
+      <form action="{{ route('backend.jadwal_pemeriksaan.update', $jadwal_pemeriksaan->id) }}" method="POST">
         @csrf
         @method('PUT')
 
@@ -49,20 +49,11 @@
         </div>
 
         {{-- Petugas --}}
-        <div class="mb-3">
-          <label for="user_id" class="form-label">Petugas</label>
-          <select name="user_id" class="form-control @error('user_id') is-invalid @enderror">
-            <option value="">-- Pilih Petugas --</option>
-            @foreach ($users as $item)
-              <option value="{{ $item->id }}"
-                {{ old('user_id', $jadwal_pemeriksaan->user_id) == $item->id ? 'selected' : '' }}>
-                {{ $item->name }}
-              </option>
-            @endforeach
-          </select>
-          @error('user_id')
-            <div class="invalid-feedback">{{ $message }}</div>
-          @enderror
+        <div class="row mb-3">
+          <label class="col-sm-2 col-form-label">Petugas</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" value="{{ auth()->user()->name }}" readonly>
+          </div>
         </div>
 
         {{-- Keterangan --}}
@@ -80,7 +71,7 @@
         <div class="row justify-content-end">
           <div class="col-sm-10">
             <button type="submit" class="btn btn-primary">Ubah</button>
-            <a href="{{ route('jadwal_pemeriksaan.index') }}" class="btn btn-secondary">Batal</a>
+            <a href="{{ route('backend.jadwal_pemeriksaan.index') }}" class="btn btn-secondary">Batal</a>
           </div>
         </div>
       </form>

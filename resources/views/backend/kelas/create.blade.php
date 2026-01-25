@@ -19,7 +19,7 @@
         </div>
       @endif
 
-      <form action="{{ route('kelas.store') }}" method="POST">
+      <form action="{{ route('backend.kelas.store') }}" method="POST">
         @csrf
 
         {{-- Kelas --}}

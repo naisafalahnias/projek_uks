@@ -16,7 +16,7 @@
         }
 
         .header-logo img {
-            width: 80px;
+            width: 200px;
         }
 
         h4 {
@@ -63,7 +63,11 @@
 <body>
 
     <div class="header-logo">
-        <img src="{{ asset('assets/backend/img/logo.png') }}" alt="Logo UKS">
+        @php
+            $logo = base64_encode(file_get_contents(public_path('assets/backend/img/avatars/logo.png')));
+        @endphp
+
+        <img src="data:image/png;base64,{{ $logo }}" width="80" alt="Logo UKS"> 
     </div>
 
     <h4>Laporan Rekam Medis Siswa</h4>

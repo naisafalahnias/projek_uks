@@ -33,14 +33,23 @@ class AdminController extends Controller
         for ($i = 1; $i <= 12; $i++) {
             $dataKunjungan[] = $kunjunganPerBulan[$i] ?? 0;
         }
+        // Tambahan untuk chart stok obat
+        $obat = Obat::select('nama_obat', 'stok')->get();
+        $dataObatLabels = $obat->pluck('nama_obat');
+        $dataObatStok   = $obat->pluck('stok');
+        $stokObatChart = Obat::select('nama_obat', 'stok')->get();
 
         return view('dashboard.admin', compact(
             'jumlahSiswa',
             'jumlahUser',
             'jumlahObat',
             'jumlahRekamMedis',
-            'dataKunjungan'
+            'dataKunjungan',
+            'dataObatLabels',
+            'dataObatStok',
+            'stokObatChart'
         ));
+        
     }
 
 }

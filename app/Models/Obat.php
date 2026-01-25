@@ -8,8 +8,8 @@ class Obat extends Model
 {
     public $fillable = ['nama_obat','kategori','stok','tgl_kaldaluarsa','unit','deskripsi'];
     
-    public function rekam_medis()
+    public function rekam_medis_obat()
     {
-        return $this->hasMany(RekamMedis::class);
+        return $this->hasMany(RekamMedisObat::class);
     }
 }

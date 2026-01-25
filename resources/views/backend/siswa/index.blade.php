@@ -5,7 +5,11 @@
   <div class="card shadow-sm">
     <div class="d-flex justify-content-between align-items-center">
       <h5 class="card-header mb-0">Filter Data Siswa per Kelas</h5>
-      <a href="{{ route('siswa.create') }}" class="btn btn-primary me-4 mt-2">Tambah Siswa</a>
+      @auth
+          @if(in_array(Auth::user()->role, ['admin', 'petugas']))
+            <a href="{{ route('backend.siswa.create') }}" class="btn btn-primary me-4 mt-2">Tambah Siswa</a>
+          @endif
+      @endauth
     </div>
 
     <div class="px-3 mt-3">
@@ -22,6 +26,7 @@
         <thead class="table-light">
           <tr>
             <th>Nama</th>
+            <th>Tanggal Lahir</th>
             <th>Kelas</th>
             <th>Jenis Kelamin</th>
             @if(auth()->user()->role === 'admin')
@@ -46,7 +51,7 @@
                 let keyword = $('#search-input').val();
 
                 $.ajax({
-                    url: "{{ route('siswa.search') }}",
+                    url: "{{ route('backend.siswa.search') }}",
                     type: 'GET',
                     data: {
                         keyword: keyword,

@@ -38,20 +38,19 @@ class JadwalPemeriksaanController extends Controller
         $request->validate([
             'tanggal'    => 'required|date',
             'kelas_id'   => 'required|exists:kelas,id',
-            'user_id'    => 'required|exists:users,id',
             'keterangan' => 'nullable|string',
         ]);
 
         $jadwal =   JadwalPemeriksaan::create([
             'tanggal'    => $request->tanggal,
             'kelas_id'   => $request->kelas_id,
-            'user_id'    => $request->user_id,
+            'user_id'    => auth()->id(),
             'keterangan' => $request->keterangan,
         ]);
 
         logAktivitas("Menambah Jadwal Pemeriksaan {$jadwal->kelas_id} pada tanggal {$jadwal->tanggal}", 'jadwal_pemeriksaan');
 
-        return redirect()->route('jadwal_pemeriksaan.index')->with('success', 'Jadwal berhasil disimpan.');
+        return redirect()->route('backend.jadwal_pemeriksaan.index')->with('success', 'Jadwal berhasil disimpan.');
 
     }
 
@@ -85,7 +84,6 @@ class JadwalPemeriksaanController extends Controller
         $request->validate([
             'tanggal'    => 'required|date',
             'kelas_id'   => 'required|exists:kelas,id',
-            'user_id'    => 'required|exists:users,id',
             'keterangan' => 'nullable|string',
         ]);
 
@@ -93,12 +91,12 @@ class JadwalPemeriksaanController extends Controller
         $jadwal->update([
             'tanggal'    => $request->tanggal,
             'kelas_id'   => $request->kelas_id,
-            'user_id'    => $request->user_id,
+            'user_id'    => auth()->id(),
             'keterangan' => $request->keterangan,
         ]);
         logAktivitas("Mengedit Jadwal Pemeriksaan {$jadwal->kelas_id} pada tanggal {$jadwal->tanggal}", 'jadwal');
 
-        return redirect()->route('jadwal_pemeriksaan.index')->with('success', 'Jadwal berhasil diperbarui.');
+        return redirect()->route('backend.jadwal_pemeriksaan.index')->with('success', 'Jadwal berhasil diperbarui.');
     }
 
     /**
@@ -109,7 +107,7 @@ class JadwalPemeriksaanController extends Controller
         $jadwal = JadwalPemeriksaan::findOrFail($id);
         $jadwal->delete();
 
-        return redirect()->route('jadwal_pemeriksaan.index')->with('success', 'Jadwal berhasil dihapus.');
+        return redirect()->route('backend.jadwal_pemeriksaan.index')->with('success', 'Jadwal berhasil dihapus.');
 
     }
     public function laporan(Request $request)

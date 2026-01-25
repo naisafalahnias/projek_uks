@@ -33,56 +33,51 @@ class SiswaController extends Controller
     {
         $request->validate([
             'nama' => 'required|string',
+            'tanggal_lahir' => 'nullable|date|before:today',
             'kelas_id' => 'required|exists:kelas,id',
             'jenis_kelamin' => 'required|in:L,P',
         ]);
 
-        $siswa  =   Siswa::create([
+        $siswa = Siswa::create([
             'nama' => $request->nama,
+            'tanggal_lahir' => $request->tanggal_lahir,
             'kelas_id' => $request->kelas_id,
             'jenis_kelamin' => $request->jenis_kelamin,
-            'user_id' => auth()->id(), // 👈 Simpan siapa yang input
+            'user_id' => auth()->id(),
         ]);
 
         logAktivitas("Menambah Siswa {$siswa->nama}", 'siswa');
 
-        return redirect()->route('backend.siswa.index')->with('success', 'Data siswa berhasil ditambahkan.');
-    }
-
-    // 👀 Detail (kalau dipakai)
-    public function show($id)
-    {
-        $siswa = Siswa::findOrFail($id);
-        return view('backend.siswa.show', compact('siswa'));
+        return redirect()->route('backend.siswa.index')
+            ->with('success', 'Data siswa berhasil ditambahkan.');
     }
 
     // ✏️ Form edit siswa
-    public function edit($id)
+    public function edit(Siswa $siswa)
     {
-        $siswa = Siswa::findOrFail($id);
-        $kelas = Kelas::all();        
+        $kelas = Kelas::all();
         return view('backend.siswa.edit', compact('siswa', 'kelas'));
     }
 
+
     // 🔄 Simpan perubahan siswa
-    public function update(Request $request, $id)
+    public function update(Request $request, Siswa $siswa)
     {
         $request->validate([
             'nama' => 'required|string',
+            'tanggal_lahir' => 'nullable|date|before:today',
             'kelas_id' => 'required|exists:kelas,id',
             'jenis_kelamin' => 'required|in:L,P',
         ]);
 
-        $siswa = Siswa::findOrFail($id);
-        $siswa->update([
-            'nama' => $request->nama,
-            'kelas_id' => $request->kelas_id,
-            'jenis_kelamin' => $request->jenis_kelamin,
-        ]);
-        
+        $siswa->update($request->only([
+            'nama',  'tanggal_lahir', 'kelas_id', 'jenis_kelamin'
+        ]));
+
         logAktivitas("Mengedit Siswa {$siswa->nama}", 'siswa');
 
-        return redirect()->route('backend.siswa.index')->with('success', 'Data siswa berhasil diupdate.');
+        return redirect()->route('backend.siswa.index')
+            ->with('success', 'Data siswa berhasil diupdate.');
     }
 
     // 🗑️ Hapus siswa
@@ -114,7 +109,7 @@ class SiswaController extends Controller
 
         if ($kelas) {
             $query->whereHas('kelas', function ($q) use ($kelas) {
-                $q->where('nama', $kelas);
+                $q->where('id', $kelas);
             });
         }
 

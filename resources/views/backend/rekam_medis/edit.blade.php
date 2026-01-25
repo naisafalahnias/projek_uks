@@ -19,21 +19,20 @@
         </div>
       @endif
 
-      <form action="{{ route('rekam_medis.update', $rekam_medis->id) }}" method="POST">
+      <form action="{{ route('backend.rekam_medis.update', $rekam_medis->id) }}" method="POST">
         @csrf
+        @method('PUT')
 
-        <div class="row mb-3">
-          <label class="col-sm-2 col-form-label">Siswa</label>
-          <div class="col-sm-10">
-            <select name="siswa_id" class="form-select">
-              <option disabled selected>Pilih Siswa</option>
-              @foreach ($siswa as $data)
-                <option value="{{ $data->id }}" {{ old('siswa_id') == $data->id ? 'selected' : '' }} >
-                  {{ $data->nama }}
-                </option>
-              @endforeach
-            </select>
-          </div>
+        <div class="mb-3">
+          <label class="col-sm-2 col-form-label">Pilih Siswa</label>
+          <select name="siswa_id" class="form-control" readonly>
+            <option value="{{ $rekam_medis->siswa->id }}" selected>
+              {{ $rekam_medis->siswa->nama }}
+            </option>
+          </select>
+          @error('siswa_id')
+            <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
         </div>
 
         <div class="row mb-3">
@@ -59,7 +58,9 @@
         <div class="row mb-3">
           <label class="col-sm-2 col-form-label">Tindakan</label>
           <div class="col-sm-10">
-            <textarea name="tindakan" class="form-control @error('tindakan') is-invalid @enderror">{{ old('tindakan') }}</textarea> 
+            <textarea name="tindakan" class="form-control @error('tindakan') is-invalid @enderror">
+              {{ old('tindakan', $rekam_medis->tindakan) }}
+            </textarea>
             @error('tindakan')
               <div class="invalid-feedback">{{ $message }}</div>
             @enderror         
@@ -72,7 +73,8 @@
             <select name="obat_id" class="form-select">
               <option disabled selected>Pilih obat</option>
               @foreach ($obat as $data)
-                <option value="{{ $data->id }}" {{ old('obat_id') == $data->id ? 'selected' : '' }}>
+                <option value="{{ $data->id }}"
+                  {{ old('obat_id', $rekam_medis->obat_id) == $data->id ? 'selected' : '' }}>
                   {{ $data->nama_obat }}
                 </option>
               @endforeach
@@ -83,21 +85,14 @@
         <div class="row mb-3">
           <label class="col-sm-2 col-form-label">Petugas</label>
           <div class="col-sm-10">
-            <select name="user_id" class="form-select">
-              <option disabled selected>Pilih user</option>
-              @foreach ($users as $data)
-                <option value="{{ $data->id }}" {{ old('user_id') == $data->id ? 'selected' : '' }}>
-                  {{ $data->name }}
-                </option>
-              @endforeach
-            </select>
+            <input type="text" class="form-control" value="{{ auth()->user()->name }}" readonly>
           </div>
         </div>
 
         <div class="row mb-3">
           <label class="col-sm-2 col-form-label">Status</label>
           <div class="col-sm-10">
-            <input type="text" name="status" class="form-control" placeholder="isi status" required>
+            <input type="text" name="status" class="form-control" placeholder="isi status" @error('status') is-invalid @enderror "value="{{ old('status', $rekam_medis->status) }} required>
             @error('status')
               <div class="invalid-feedback">{{ $message }}</div>
             @enderror         

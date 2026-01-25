@@ -5,12 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\Obat;
 use App\Models\LogAktivitas;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class ObatController extends Controller
 {
     public function index()
     {
-        $obat = Obat::all();
+        $obat = Obat::all()->map(function ($item) {
+        $today = Carbon::today();
+        $kadaluarsa = Carbon::parse($item->tgl_kadaluarsa);
+
+        if ($kadaluarsa->isPast()) {
+            $item->status_kadaluarsa = 'expired';
+        } elseif ($kadaluarsa->greaterThanOrEqualTo($today) && $kadaluarsa->diffInDays($today) <= 30) {
+            $item->status_kadaluarsa = 'near_expired';
+        } else {
+            $item->status_kadaluarsa = 'safe';
+        }
+
+        return $item;
+    });
         return view('backend.obat.index', compact('obat'));
     }
 

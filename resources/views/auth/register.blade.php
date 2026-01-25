@@ -13,7 +13,7 @@
               <span class="app-brand-logo demo">
                 {{-- (Logo SVG kalau mau ditaruh bisa di sini) --}}
               </span>
-              <span class="app-brand-text demo text-body fw-bolder">SiSehat</span>
+              <span class="app-brand-text demo text-body fw-bolder">MediSchool</span>
             </a>
           </div>
           <!-- /Logo -->

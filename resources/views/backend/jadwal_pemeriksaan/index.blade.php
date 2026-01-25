@@ -1,11 +1,15 @@
 @extends('layouts.backend')
 
 @section('content')
-<div class="container mt-5" style="max-width: 10000px"> {{-- Biar nggak full width --}}
+<div class="container mt-5" style="max-width: 10000px"> 
   <div class="card shadow-sm">
     <div class="d-flex justify-content-between align-items-center px-4 pt-3">
       <h5 class="mb-0">Jadwal Pemeriksaan</h5>
-      <a href="{{ route('jadwal_pemeriksaan.create') }}" class="btn btn-primary">Tambah Data</a>
+      @auth
+          @if(in_array(Auth::user()->role, ['admin', 'petugas']))
+            <a href="{{ route('backend.jadwal_pemeriksaan.create') }}" class="btn btn-primary">Tambah Data</a>
+          @endif
+      @endauth
     </div>
 
     <div class="table-responsive text-nowrap p-3">
@@ -33,10 +37,10 @@
                   <i class="bx bx-dots-vertical-rounded"></i>
                 </button>
                 <div class="dropdown-menu">
-                  <a class="dropdown-item" href="{{ route('jadwal_pemeriksaan.edit', $data->id) }}">
+                  <a class="dropdown-item" href="{{ route('backend.jadwal_pemeriksaan.edit', $data->id) }}">
                     <i class="bx bx-edit-alt me-2"></i> Edit
                   </a>
-                  <form action="{{ route('jadwal_pemeriksaan.destroy', $data->id) }}" method="POST" onsubmit="return confirm('Yakin mau hapus?')">
+                  <form action="{{ route('backend.jadwal_pemeriksaan.destroy', $data->id) }}" method="POST" onsubmit="return confirm('Yakin mau hapus?')">
                     @csrf
                     @method('DELETE')
                     <button class="dropdown-item" type="submit">

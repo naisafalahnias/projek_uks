@@ -5,7 +5,7 @@
   <div class="card shadow-sm">
   <div class="d-flex justify-content-between align-items-center">
     <h5 class="card-header mb-0">Data Kelas</h5>
-    <a href="{{ route('kelas.create') }}" class="btn btn-primary me-4 mt-2">Tambah data</a>
+    <a href="{{ route('backend.kelas.create') }}" class="btn btn-primary me-4 mt-2">Tambah data</a>
   </div>
 
   <div class="table-responsive text-nowrap p-3">
@@ -27,7 +27,7 @@
                 <i class="bx bx-dots-vertical-rounded"></i>
               </button>
               <div class="dropdown-menu">
-                <form action="{{ route('kelas.destroy', $data->id) }}" method="POST" onsubmit="return confirm('Yakin mau hapus?')">
+                <form action="{{ route('backend.kelas.destroy', $data->id) }}" method="POST" onsubmit="return confirm('Yakin mau hapus?')">
                   @csrf
                   @method('DELETE')
                   <button class="dropdown-item" type="submit">

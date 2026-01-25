@@ -1,4 +1,4 @@
-@extends('layouts.backend') {{-- ganti sesuai layout kamu --}}
+@extends('layouts.backend')
 
 @section('content')
     <div class="container mt-4">
@@ -10,7 +10,7 @@
                     <tr>
                         <th>#</th>
                         <th>Waktu</th>
-                        <th>Petugas</th> {{-- Kolom baru --}}
+                        <th>Petugas</th>
                         <th>Aksi</th>
                         <th>Tabel</th>
                     </tr>
@@ -18,7 +18,7 @@
                 <tbody>
                     @forelse ($logs as $log)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $logs->firstItem() + $loop->index }}</td>
                             <td>{{ $log->created_at->format('d M Y H:i') }}</td>
                             <td>{{ $log->user->name ?? '-' }}</td>
                             <td>{{ $log->aksi }}</td>
@@ -26,11 +26,16 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center">Belum ada aktivitas tercatat.</td>
+                            <td colspan="5" class="text-center">Belum ada aktivitas tercatat.</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        {{-- Pagination --}}
+        <div class="d-flex justify-content-center mt-3">
+            {{ $logs->links() }}
         </div>
     </div>
 @endsection

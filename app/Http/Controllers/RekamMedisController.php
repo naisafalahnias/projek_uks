@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Obat;
@@ -6,107 +7,171 @@ use App\Models\RekamMedis;
 use App\Models\Siswa;
 use App\Models\User;
 use App\Models\LogAktivitas;
+use App\Models\Kelas;
+use App\Models\RekamMedisObat;
 use App\Exports\RekamMedisExport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Support\Facades\DB;
+
 
 class RekamMedisController extends Controller
 {
     public function index()
     {
-        $rekam_medis = RekamMedis::with('siswa.kelas', 'obat', 'user')->latest()->get();
+        $rekam_medis = RekamMedis::with('siswa.kelas', 'rekam_medis_obat.obat', 'user')->latest()->get();
         return view('backend.rekam_medis.index', compact('rekam_medis'));
     }
 
     public function create()
     {
-        $siswa = Siswa::all();
-        $users = User::all();
         $obat  = Obat::all();
-
-        return view('backend.rekam_medis.create', compact('siswa', 'users', 'obat'));
+        $kelas = Kelas::all();
+        return view('backend.rekam_medis.create', compact('obat', 'kelas'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'siswa_id' => 'required|exists:siswas,id',
-            'tanggal'  => 'required|date',
-            'keluhan'  => 'required|string',
-            'tindakan' => 'required|string',
-            'obat_id'  => 'nullable|exists:obats,id',
-            'user_id'  => 'required|exists:users,id',
-            'status'   => 'required|string',
+        $request->validate([
+            'siswa_id' => 'required',
+            'tanggal' => 'required|date',
+            'keluhan' => 'required',
+            'tindakan' => 'required',
+            'status' => 'required',
+            'obat_id' => 'nullable|exists:obats,id',
+            'jumlah' => 'nullable|integer|min:1'
         ]);
 
-        $rekam = RekamMedis::create($validated);
+        DB::beginTransaction();
+        try {
+            // simpan rekam medis
+            $rekamMedis = RekamMedis::create([
+                'siswa_id' => $request->siswa_id,
+                'tanggal' => $request->tanggal,
+                'keluhan' => $request->keluhan,
+                'tindakan' => $request->tindakan,
+                'status' => $request->status,
+                'user_id' => auth()->id(),
+            ]);
 
-        LogAktivitas("Menambahkan rekam medis siswa {$rekam->siswa->nama} pada tanggal {$rekam->tanggal}", 'rekam_medis');
+            // kalau ada obat
+            if ($request->obat_id && $request->jumlah) {
+                $obat = Obat::lockForUpdate()->findOrFail($request->obat_id);
 
-        return redirect()->route('backend.rekam_medis.index')->with('success', 'Data berhasil ditambahkan');
+                if ($obat->stok < $request->jumlah) {
+                    throw new \Exception('Stok obat tidak mencukupi');
+                }
+
+                // simpan ke tabel rekam_medis_obat
+                RekamMedisObat::create([
+                    'rekam_medis_id' => $rekamMedis->id,
+                    'obat_id' => $obat->id,
+                    'jumlah' => $request->jumlah,
+                ]);
+
+                // kurangi stok
+                $obat->decrement('stok', $request->jumlah);
+            }
+
+            DB::commit();
+            return redirect()->route('backend.rekam_medis.index')
+                ->with('success', 'Rekam medis berhasil disimpan');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors($e->getMessage())->withInput();
+        }
     }
 
     public function show(string $id)
     {
-        $rekam_medis = RekamMedis::with('siswa.kelas', 'obat', 'user')->findOrFail($id);
+        $rekam_medis = RekamMedis::with('siswa.kelas', 'rekam_medis_obat.obat', 'user')->findOrFail($id);
         return view('backend.rekam_medis.show', compact('rekam_medis'));
     }
 
     public function edit(string $id)
     {
-        $rekam_medis = RekamMedis::findOrFail($id);
-        $siswa       = Siswa::with('user')->get();
-        $users       = User::all();
-        $obat        = Obat::all();
-
-        return view('backend.rekam_medis.edit', compact('rekam_medis', 'siswa', 'users', 'obat'));
+        $rekam_medis = RekamMedis::with(['siswa', 'obat'])->findOrFail($id);
+        $obat = Obat::all();
+        return view('backend.rekam_medis.edit', compact('rekam_medis', 'obat'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        $rekam_medis = RekamMedis::findOrFail($id);
-
-        $data = $request->validate([
-            'siswa_id' => 'required|exists:siswas,id',
-            'tanggal'  => 'required|date',
-            'keluhan'  => 'required|string',
-            'tindakan' => 'required|string',
-            'obat_id'  => 'nullable|exists:obats,id',
-            'user_id'  => 'required|exists:users,id',
-            'status'   => 'required|string',
+        $request->validate([
+            'tanggal' => 'required|date',
+            'keluhan' => 'required',
+            'tindakan' => 'required',
+            'status' => 'required',
+            'obat_id' => 'nullable|exists:obats,id',
         ]);
 
-        $rekam_medis->update($data);
+        $rekam_medis = RekamMedis::findOrFail($id);
 
-        logAktivitas("Mengedit rekam medis siswa {$rekam_medis->siswa->nama} pada tanggal {$rekam_medis->tanggal}", 'rekam_medis');
+        $rekam_medis->update([
+            'tanggal' => $request->tanggal,
+            'keluhan' => $request->keluhan,
+            'tindakan' => $request->tindakan,
+            'status' => $request->status,
+            'obat_id' => $request->obat_id,
+        ]);
 
-        return redirect()->route('rekam_medis.index')->with('success', 'Rekam medis berhasil diperbarui');
+        return redirect()
+            ->route('backend.rekam_medis.index')
+            ->with('success', 'Data rekam medis berhasil diubah');
     }
 
     public function destroy(string $id)
     {
-        $rekam_medis = RekamMedis::findOrFail($id);
-        $nama        = $rekam_medis->siswa->nama;
-        $tanggal     = $rekam_medis->tanggal;
+        DB::beginTransaction();
 
-        $rekam_medis->delete();
+        try {
+            $rekam_medis = RekamMedis::with('rekam_medis_obat.obat')->findOrFail($id);
 
-        logAktivitas("Menghapus rekam medis siswa {$nama} tanggal {$tanggal}", 'rekam_medis');
+            $nama = $rekam_medis->siswa->nama;
+            $tanggal = $rekam_medis->tanggal;
 
-        return redirect()->route('rekam_medis.index')->with('success', 'Rekam medis berhasil dihapus');
+            // balikin stok obat
+            foreach ($rekam_medis->rekam_medis_obat as $item) {
+                $item->obat->increment('stok', $item->jumlah);
+            }
+
+            // hapus detail obat
+            $rekam_medis->rekam_medis_obat()->delete();
+
+            // hapus rekam medis
+            $rekam_medis->delete();
+
+            DB::commit();
+
+            logAktivitas(
+                "Menghapus rekam medis siswa {$nama} tanggal {$tanggal}",
+                'rekam_medis'
+            );
+
+            return redirect()
+                ->route('backend.rekam_medis.index')
+                ->with('success', 'Data berhasil dihapus');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function getSiswaByKelas($kelas_id)
+    {
+        $siswas = Siswa::where('kelas_id', $kelas_id)->get(['id', 'nama']);
+        return response()->json($siswas);
     }
 
     public function laporan(Request $request)
     {
         $query = RekamMedis::with('siswa.kelas');
-
         if ($request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {
             $query->whereBetween('tanggal', [$request->tanggal_awal, $request->tanggal_akhir]);
         }
-
         $rekam_medis = $query->latest()->get();
-
         return view('backend.rekam_medis.laporan', compact('rekam_medis'));
     }
 
@@ -114,5 +179,4 @@ class RekamMedisController extends Controller
     {
         return Excel::download(new RekamMedisExport($request->tanggal_awal, $request->tanggal_akhir), 'laporan-rekam-medis.xlsx');
     }
-
 }

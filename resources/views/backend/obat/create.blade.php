@@ -19,7 +19,7 @@
         </div>
       @endif
 
-      <form action="{{ route('obat.store') }}" method="POST">
+      <form action="{{ route('backend.obat.store') }}" method="POST">
         @csrf
 
         <div class="row mb-3">

@@ -13,9 +13,8 @@
           <div class="app-brand justify-content-center">
             <a href="{{ url('/') }}" class="app-brand-link gap-2">
               <span class="app-brand-logo demo">
-                <img src="{{ asset('assets/backend/img/logo.png') }}" alt="Logo UKS" width="50" height="50" />
+                <img src="{{ asset('assets/backend/img/avatars/logo.png') }}" alt="Logo UKS" width="220" />
               </span>
-              <span class="app-brand-text demo text-body fw-bolder">SiSehat</span>
             </a>
           </div>
           <!-- /Logo -->
@@ -50,11 +49,6 @@
             <div class="mb-3 form-password-toggle">
               <div class="d-flex justify-content-between">
                 <label class="form-label" for="password">Password</label>
-                @if (Route::has('password.request'))
-                <a href="{{ route('password.request') }}">
-                  <small>Lupa Password?</small>
-                </a>
-                @endif
               </div>
               <div class="input-group input-group-merge">
                 <input
@@ -72,15 +66,6 @@
                 <strong>{{ $message }}</strong>
               </span>
               @enderror
-            </div>
-
-            <!-- Remember Me -->
-            <div class="mb-3">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="remember" id="remember"
-                  {{ old('remember') ? 'checked' : '' }} />
-                <label class="form-check-label" for="remember">Ingatkan Saya</label>
-              </div>
             </div>
 
             <!-- Submit Button -->

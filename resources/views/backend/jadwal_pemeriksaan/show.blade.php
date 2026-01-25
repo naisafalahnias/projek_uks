@@ -29,7 +29,7 @@
                                     </tr>
 
                                 </table>
-                                <a href="{{ route('jadwal_pemeriksaan.index') }}" class="btn btn-primary">Kembali</a>
+                                <a href="{{ route('backend.jadwal_pemeriksaan.index') }}" class="btn btn-primary">Kembali</a>
                             </div>
                         </div>
                     </div>

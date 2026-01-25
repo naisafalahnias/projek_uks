@@ -19,7 +19,7 @@
         </div>
       @endif
 
-      <form action="{{ route('rekam_medis.update', $rekam_medis->id) }}" method="POST">
+      <form action="{{ route('backend.rekam_medis.update', $rekam_medis->id) }}" method="POST">
         @csrf
 
         <div class="row mb-3">

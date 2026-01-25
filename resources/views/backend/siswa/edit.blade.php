@@ -19,14 +19,23 @@
         </div>
       @endif
 
-      <form action="{{ route('siswa.update',$siswa->id) }}" method="POST">
+      <form action="{{ route('backend.siswa.update',$siswa->id) }}" method="POST">
         @csrf
+        @method('PUT')
 
         {{-- Pilih User --}}
         <div class="row mb-3">
           <label class="col-sm-2 col-form-label">Nama Siswa</label>
           <div class="col-sm-10">
             <input type="text" name="nama" class="form-control" value="{{ $siswa->nama }}" required>
+          </div>
+        </div>
+
+        {{-- tgl lahir --}}
+        <div class="row mb-3">
+          <label class="col-sm-2 col-form-label">Tanggal Lahir</label>
+          <div class="col-sm-10">
+            <input type="date" name="tanggal_lahir" class="form-control" value="{{ $siswa->tanggal_lahir }}" required>
           </div>
         </div>
 

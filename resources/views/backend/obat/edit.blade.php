@@ -19,8 +19,9 @@
         </div>
       @endif
 
-      <form action="{{ route('obat.update', $obat->id) }}" method="POST">
+      <form action="{{ route('backend.obat.update', $obat->id) }}" method="POST">
         @csrf
+        @method('PUT')
 
         <div class="row mb-3">
           <label class="col-sm-2 col-form-label">Nama Obat</label>

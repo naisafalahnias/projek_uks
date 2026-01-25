@@ -62,14 +62,15 @@
                     </tbody>
                 </table>
                 <br>
-                <a href="{{ route('rekam_medis.export.pdf', ['tanggal_awal' => request('tanggal_awal'), 'tanggal_akhir' => request('tanggal_akhir')]) }}"
-                    class="btn btn-danger mb-3" target="_blank">
-                    Export PDF
-                </a>
                 <a href="{{ route('rekam_medis.export.excel', ['tanggal_awal' => request('tanggal_awal'), 'tanggal_akhir' => request('tanggal_akhir')]) }}"
                     class="btn btn-success mb-3 ms-2" target="_blank">
                     Export Excel
                 </a>
+                <a href="{{ route('rekam_medis.export.pdf', ['tanggal_awal' => request('tanggal_awal'), 'tanggal_akhir' => request('tanggal_akhir')]) }}"
+                    class="btn btn-warning mb-3" target="_blank">
+                    Export PDF
+                </a>
+                
 
             </div>
         </div>

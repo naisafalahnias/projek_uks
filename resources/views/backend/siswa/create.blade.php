@@ -19,7 +19,7 @@
         </div>
       @endif
 
-      <form action="{{ route('siswa.store') }}" method="POST">
+      <form action="{{ route('backend.siswa.store') }}" method="POST">
         @csrf
 
         {{-- Pilih User --}}
@@ -27,6 +27,14 @@
           <label class="col-sm-2 col-form-label">Nama Siswa</label>
           <div class="col-sm-10">
             <input type="text" name="nama" class="form-control" placeholder="" required>
+          </div>
+        </div>
+
+        {{-- atur tgl lahir --}}
+        <div class="row mb-3">
+          <label class="col-sm-2 col-form-label">Tanggal Lahir</label>
+          <div class="col-sm-10">
+            <input type="date" name="tanggal_lahir" class="form-control" placeholder="" required>
           </div>
         </div>
 
