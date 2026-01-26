@@ -13,6 +13,6 @@ class PemeriksaanGizi extends Model
     }
 
     public function petugas() {
-        return $this->belongsTo(Petugas::class);
+        return $this->belongsTo(User::class, 'petugas_id');
     }
 }

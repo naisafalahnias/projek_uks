@@ -25,11 +25,10 @@
 
         <div class="mb-3">
           <label class="col-sm-2 col-form-label">Pilih Siswa</label>
-          <select name="siswa_id" class="form-control" readonly>
-            <option value="{{ $rekam_medis->siswa->id }}" selected>
-              {{ $rekam_medis->siswa->nama }}
-            </option>
+          <select class="form-control" disabled>
+            <option selected>{{ $rekam_medis->siswa->nama }}</option>
           </select>
+          <input type="hidden" name="siswa_id" value="{{ $rekam_medis->siswa->id }}">
           @error('siswa_id')
             <div class="invalid-feedback">{{ $message }}</div>
           @enderror
@@ -68,17 +67,23 @@
         </div>
 
         <div class="row mb-3">
-          <label class="col-sm-2 col-form-label">Obat</label>
+          <label class="col-sm-2 col-form-label">Obat yang diberikan</label>
           <div class="col-sm-10">
-            <select name="obat_id" class="form-select">
-              <option disabled selected>Pilih obat</option>
-              @foreach ($obat as $data)
-                <option value="{{ $data->id }}"
-                  {{ old('obat_id', $rekam_medis->obat_id) == $data->id ? 'selected' : '' }}>
-                  {{ $data->nama_obat }}
-                </option>
-              @endforeach
-            </select>
+            @foreach ($rekam_medis->rekam_medis_obat as $item)
+              <div class="row mb-2">
+                <div class="col-md-6">
+                  <input type="text" class="form-control"
+                    value="{{ $item->obat->nama_obat }} ({{ $item->obat->unit }})"
+                    readonly>
+                </div>
+                <div class="col-md-3">
+                  <input type="number"
+                    name="jumlah[{{ $item->id }}]"
+                    value="{{ $item->jumlah }}"
+                    class="form-control">
+                </div>
+              </div>
+            @endforeach
           </div>
         </div>
 
@@ -92,10 +97,15 @@
         <div class="row mb-3">
           <label class="col-sm-2 col-form-label">Status</label>
           <div class="col-sm-10">
-            <input type="text" name="status" class="form-control" placeholder="isi status" @error('status') is-invalid @enderror "value="{{ old('status', $rekam_medis->status) }} required>
-            @error('status')
-              <div class="invalid-feedback">{{ $message }}</div>
-            @enderror         
+            <input type="text"
+              name="status"
+              class="form-control @error('status') is-invalid @enderror"
+              placeholder="isi status"
+              value="{{ old('status', $rekam_medis->status) }}"
+              required>
+              @error('status')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror         
           </div>
         </div>
       

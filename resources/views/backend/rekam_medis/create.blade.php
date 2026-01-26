@@ -87,7 +87,8 @@
               <option value="">Pilih obat</option>
               @foreach ($obat as $data)
                 <option value="{{ $data->id }}">
-                  {{ $data->nama_obat }} (stok: {{ $data->stok }})
+                  {{ $data->nama_obat }} 
+                  (stok: {{ $data->stok }} {{ $data->unit }})
                 </option>
               @endforeach
             </select>
@@ -95,7 +96,7 @@
 
           <div class="col-sm-5">
             <input type="number" name="jumlah" class="form-control @error('jumlah') is-invalid @enderror"
-              placeholder="Jumlah (kaplet)" min="1">
+              placeholder="Jumlah sesuai satuan obat">
           </div>
         </div>
 

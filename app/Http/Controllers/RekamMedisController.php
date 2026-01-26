@@ -91,8 +91,13 @@ class RekamMedisController extends Controller
 
     public function edit(string $id)
     {
-        $rekam_medis = RekamMedis::with(['siswa', 'obat'])->findOrFail($id);
+        $rekam_medis = RekamMedis::with([
+            'siswa',
+            'rekam_medis_obat.obat'
+        ])->findOrFail($id);
+
         $obat = Obat::all();
+
         return view('backend.rekam_medis.edit', compact('rekam_medis', 'obat'));
     }
 
@@ -103,24 +108,32 @@ class RekamMedisController extends Controller
             'keluhan' => 'required',
             'tindakan' => 'required',
             'status' => 'required',
-            'obat_id' => 'nullable|exists:obats,id',
+            'jumlah' => 'array',
         ]);
 
         $rekam_medis = RekamMedis::findOrFail($id);
 
+        // update rekam medis utama
         $rekam_medis->update([
             'tanggal' => $request->tanggal,
             'keluhan' => $request->keluhan,
             'tindakan' => $request->tindakan,
             'status' => $request->status,
-            'obat_id' => $request->obat_id,
         ]);
+
+        // 🔥 UPDATE JUMLAH OBAT
+        if ($request->has('jumlah')) {
+            foreach ($request->jumlah as $rmObatId => $jumlah) {
+                RekamMedisObat::where('id', $rmObatId)
+                    ->update(['jumlah' => $jumlah]);
+            }
+        }
 
         return redirect()
             ->route('backend.rekam_medis.index')
             ->with('success', 'Data rekam medis berhasil diubah');
     }
-
+    
     public function destroy(string $id)
     {
         DB::beginTransaction();
