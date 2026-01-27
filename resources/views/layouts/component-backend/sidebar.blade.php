@@ -76,6 +76,13 @@
       </a>
     </li>
 
+    <li class="menu-item {{ request()->routeIs('backend.kondisi_kesehatan.index') ? 'active' : '' }}">
+      <a href="{{ route('backend.kondisi_kesehatan.index') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-clinic"></i>
+        <div data-i18n="Basic">Kondisi Kesehatan</div>
+      </a>
+    </li>
+
     <li class="menu-header small text-uppercase">
       <span class="menu-header-text">LAPORAN</span>
     </li>

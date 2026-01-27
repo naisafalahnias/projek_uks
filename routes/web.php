@@ -9,6 +9,7 @@ use App\Http\Controllers\JadwalPemeriksaanController;
 use App\Http\Controllers\RekamMedisController;
 use App\Http\Controllers\LogAktivitasController;
 use App\Http\Controllers\PemeriksaanGiziController;
+use App\Http\Controllers\KondisiKesehatanController;
 use App\Models\RekamMedis;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -82,11 +83,12 @@ Route::middleware(['auth'])->prefix('backend')->name('backend.')->group(function
     Route::resource('kelas', KelasController::class)->except(['show']);
     Route::resource('obat', ObatController::class)->except(['show']);
     Route::resource('jadwal_pemeriksaan', JadwalPemeriksaanController::class)->except(['show']);
-    Route::resource('rekam_medis', RekamMedisController::class)->except(['show']);
+    Route::resource('rekam_medis', RekamMedisController::class);
 
     Route::get('rekam_medis/laporan', [RekamMedisController::class, 'laporan'])
         ->name('rekam_medis.laporan');
     Route::resource('pemeriksaan_gizi', PemeriksaanGiziController::class)->except(['show']);
+    Route::resource('kondisi_kesehatan', KondisiKesehatanController::class)->except(['show']);
 });
 
 

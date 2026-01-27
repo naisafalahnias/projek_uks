@@ -21,7 +21,7 @@
           </select>
         </div>
 
-        <div class="mb-3">
+        <div class="mb-3">  
           <label>Tanggal</label>
           <input type="date" name="tanggal" class="form-control" required>
         </div>

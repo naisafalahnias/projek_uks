@@ -3,115 +3,51 @@
 @section('content')
 <div class="col-xxl">
   <div class="card mb-4">
-    <div class="card-header d-flex align-items-center justify-content-between">
-      <h5 class="mb-0">Data Rekam Medis</h5>
-      <small class="text-muted float-end"></small>
+    <div class="card-header">
+      <h5 class="mb-0">Detail Rekam Medis</h5>
     </div>
+
     <div class="card-body">
-      {{-- Tampilkan error validasi --}}
-      @if ($errors->any())
-        <div class="alert alert-danger">
-          <ul class="mb-0">
-            @foreach ($errors->all() as $error)
-              <li>{{ $error }}</li>
-            @endforeach
-          </ul>
-        </div>
-      @endif
 
-      <form action="{{ route('backend.rekam_medis.update', $rekam_medis->id) }}" method="POST">
-        @csrf
+      <div class="mb-3">
+        <label class="form-label">Siswa</label>
+        <input type="text" class="form-control" value="{{ $rekam_medis->siswa->nama }}" readonly>
+      </div>
 
-        <div class="row mb-3">
-          <label class="col-sm-2 col-form-label">Siswa</label>
-          <div class="col-sm-10">
-            <select name="siswa_id" class="form-select">
-              <option disabled selected>Pilih Siswa</option>
-              @foreach ($siswa as $data)
-                <option value="{{ $data->id }}" {{ old('siswa_id') == $data->id ? 'selected' : '' }} disabled>
-                  {{ $data->nama }}
-                </option>
-              @endforeach
-            </select>
-          </div>
-        </div>
+      <div class="mb-3">
+        <label class="form-label">Tanggal</label>
+        <input type="text" class="form-control" value="{{ $rekam_medis->tanggal }}" readonly>
+      </div>
 
-        <div class="row mb-3">
-          <label class="col-sm-2 col-form-label">tanggal</label>
-          <div class="col-sm-10">
-            <input type="date" name="tanggal" class="form-control" placeholder="" value="{{ $rekam_medis->tanggal }}" disabled required>
-            @error('tanggal')
-              <div class="invalid-feedback">{{ $message }}</div>
-            @enderror         
-          </div>
-        </div>
-        
-        <div class="row mb-3">
-          <label class="col-sm-2 col-form-label">Keluhan</label>
-          <div class="col-sm-10">
-            <input type="text" name="keluhan" class="form-control" placeholder="isi keluhan" disabled required>
-            @error('keluhan')
-              <div class="invalid-feedback">{{ $message }}</div>
-            @enderror         
-          </div>
-        </div>
-        
-        <div class="row mb-3">
-          <label class="col-sm-2 col-form-label">Tindakan</label>
-          <div class="col-sm-10">
-            <textarea name="tindakan" class="form-control @error('tindakan') is-invalid @enderror" disabled>{{ old('tindakan') }}</textarea> 
-            @error('tindakan')
-              <div class="invalid-feedback">{{ $message }}</div>
-            @enderror         
-          </div>
-        </div>
+      <div class="mb-3">
+        <label class="form-label">Keluhan</label>
+        <textarea class="form-control" readonly>{{ $rekam_medis->keluhan }}</textarea>
+      </div>
 
-        <div class="row mb-3">
-          <label class="col-sm-2 col-form-label">Obat</label>
-          <div class="col-sm-10">
-            <select name="obat_id" class="form-select">
-              <option disabled selected>Pilih obat</option>
-              @foreach ($obat as $data)
-                <option value="{{ $data->id }}" {{ old('obat_id') == $data->id ? 'selected' : '' }} disabled>
-                  {{ $data->nama }}
-                </option>
-              @endforeach
-            </select>
-          </div>
-        </div>
+      <div class="mb-3">
+        <label class="form-label">Tindakan</label>
+        <textarea class="form-control" readonly>{{ $rekam_medis->tindakan }}</textarea>
+      </div>
 
-        <div class="row mb-3">
-          <label class="col-sm-2 col-form-label">Petugas</label>
-          <div class="col-sm-10">
-            <select name="user_id" class="form-select">
-              <option disabled selected>Pilih user</option>
-              @foreach ($users as $data)
-                <option value="{{ $data->id }}" {{ old('user_id') == $data->id ? 'selected' : '' }} disabled>
-                  {{ $data->name }}
-                </option>
-              @endforeach
-            </select>
-          </div>
-        </div>
+      <div class="mb-3">
+        <label class="form-label">Obat yang diberikan</label>
+        <ul>
+          @foreach ($rekam_medis->rekam_medis_obat as $item)
+            <li>
+              {{ $item->obat->nama_obat }}
+              ({{ $item->jumlah }} {{ $item->obat->unit }})
+            </li>
+          @endforeach
+        </ul>
+      </div>
 
-        <div class="row mb-3">
-          <label class="col-sm-2 col-form-label">Status</label>
-          <div class="col-sm-10">
-            <input type="text" name="status" class="form-control" placeholder="isi status" disabled required>
-            @error('status')
-              <div class="invalid-feedback">{{ $message }}</div>
-            @enderror         
-          </div>
-        </div>
-      
-        {{-- Tombol --}}
-        <div class="row justify-content-end">
-          <div class="col-sm-10">
-            <button type="submit" class="btn btn-primary">Ubah</button>
-            <a href="{{ route('backend.rekam_medis.index') }}" class="btn btn-secondary"></a>
-          </div>
-        </div>
-      </form>
+      <div class="mb-3">
+        <label class="form-label">Status</label>
+        <input type="text" class="form-control" value="{{ $rekam_medis->status }}" readonly>
+      </div>
+
+      <a href="{{ route('backend.rekam_medis.index') }}" class="btn btn-secondary">Kembali</a>
+
     </div>
   </div>
 </div>

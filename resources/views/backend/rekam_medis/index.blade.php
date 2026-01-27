@@ -73,6 +73,9 @@
                     <i class="bx bx-dots-vertical-rounded"></i>
                   </button>
                   <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{{ route('backend.rekam_medis.show', $data->id) }}">
+                      <i class="bx bx-show me-2"></i> Detail
+                    </a>
                     <a class="dropdown-item" href="{{ route('backend.rekam_medis.edit', $data->id) }}">
                       <i class="bx bx-edit-alt me-2"></i> Edit
                     </a>

@@ -9,7 +9,7 @@ class KondisiKesehatan extends Model
 {
     use HasFactory;
 
-    protected $table = 'kondisi_kesehatan';
+    protected $table = 'kondisi_kesehatans';
 
     protected $fillable = [
         'siswa_id',
