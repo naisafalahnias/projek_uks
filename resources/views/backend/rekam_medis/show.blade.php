@@ -33,10 +33,8 @@
         <label class="form-label">Obat yang diberikan</label>
         <ul>
           @foreach ($rekam_medis->rekam_medis_obat as $item)
-            <li>
               {{ $item->obat->nama_obat }}
               ({{ $item->jumlah }} {{ $item->obat->unit }})
-            </li>
           @endforeach
         </ul>
       </div>

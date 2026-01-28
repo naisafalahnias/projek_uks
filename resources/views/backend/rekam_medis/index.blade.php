@@ -40,19 +40,14 @@
               {{-- OBAT --}}
               <td>
                 @if ($data->rekam_medis_obat->count())
-                  <ul class="mb-0 ps-3">
-                    @foreach ($data->rekam_medis_obat as $rmObat)
-                      <li>
-                        {{ $rmObat->obat->nama_obat }}
-                        ({{ $rmObat->jumlah }} {{ $rmObat->obat->unit }})
-                      </li>
-                    @endforeach
-                  </ul>
+                  {{ $data->rekam_medis_obat
+                      ->pluck('obat.nama_obat')
+                      ->implode(', ') }}
                 @else
                   -
                 @endif
               </td>
-
+              
               <td>{{ $data->user->name }}</td>
 
               <td>

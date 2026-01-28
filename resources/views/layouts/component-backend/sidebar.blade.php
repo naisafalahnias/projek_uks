@@ -83,6 +83,27 @@
       </a>
     </li>
 
+    <li class="menu-item {{ request()->routeIs('backend.makanans.index') ? 'active' : '' }}">
+      <a href="{{ route('backend.makanans.index') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-dish"></i>
+        <div data-i18n="Basic">Makanan</div>
+      </a>
+    </li>
+
+    <li class="menu-item {{ request()->routeIs('backend.konsumsi_makanan.index') ? 'active' : '' }}">
+      <a href="{{ route('backend.konsumsi_makanan.index') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-notepad"></i>
+        <div data-i18n="Basic">Konsumsi</div>
+      </a>
+    </li>
+
+    <li class="menu-item {{ request()->routeIs('backend.kebutuhan_kalori.index') ? 'active' : '' }}">
+      <a href="{{ route('backend.kebutuhan_kalori.index') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-line-chart"></i>
+        <div data-i18n="Basic">Kebutuhan Kalori</div>
+      </a>
+    </li>
+
     <li class="menu-header small text-uppercase">
       <span class="menu-header-text">LAPORAN</span>
     </li>
