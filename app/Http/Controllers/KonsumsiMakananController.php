@@ -87,7 +87,7 @@ class KonsumsiMakananController extends Controller
             'total_kalori' => $totalKalori,
         ]);
 
-        return redirect()->route('konsumsi-makanan.index')
+        return redirect()->route('backend.konsumsi_makanan.index')
             ->with('success', 'Data konsumsi makanan berhasil diupdate');
     }
 
@@ -95,7 +95,7 @@ class KonsumsiMakananController extends Controller
     {
         KonsumsiMakanan::findOrFail($id)->delete();
 
-        return redirect()->route('konsumsi-makanan.index')
+        return redirect()->route('backend.konsumsi_makanan.index')
             ->with('success', 'Data berhasil dihapus');
     }
 }
