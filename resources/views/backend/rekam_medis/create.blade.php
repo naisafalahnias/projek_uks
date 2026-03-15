@@ -1,173 +1,192 @@
 @extends('layouts.backend')
 
 @section('content')
-<div class="container mt-5" style="max-width: 10000px">
-  <div class="card mb-4">
-    <div class="card-header d-flex align-items-center justify-content-between">
-      <h5 class="mb-0">Tambah Rekam Medis</h5>
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4">
+        <span class="text-muted fw-light">Kesehatan /</span> Tambah Rekam Medis
+    </h4>
+
+    <div class="row">
+        <div class="col-xl">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center border-bottom mb-3">
+                    <h5 class="mb-0 text-primary fw-bold">
+                        <i class="bx bx-plus-medical me-1"></i> Input Data Pemeriksaan
+                    </h5>
+                    <small class="text-muted float-end">Lengkapi detail kesehatan siswa</small>
+                </div>
+                <div class="card-body">
+                    {{-- Alert Error Validasi --}}
+                    @if ($errors->any())
+                        <div class="alert alert-label-danger alert-dismissible fade show" role="alert">
+                            <ul class="mb-0 small">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    <form action="{{ route('backend.rekam_medis.store') }}" method="POST">
+                        @csrf
+
+                        <div class="row">
+                            {{-- Pilih Kelas --}}
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="kelasSelect">Pilih Kelas</label>
+                                <div class="input-group input-group-merge">
+                                    <span class="input-group-text"><i class="bx bx-buildings"></i></span>
+                                    <select id="kelasSelect" name="kelas_id" class="form-select @error('kelas_id') is-invalid @enderror" required>
+                                        <option value="">-- Pilih Kelas --</option>
+                                        @foreach ($kelas as $k)
+                                            <option value="{{ $k->id }}" {{ old('kelas_id') == $k->id ? 'selected' : '' }}>{{ $k->nama_kelas }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            {{-- Pilih Siswa --}}
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="siswaSelect">Nama Siswa</label>
+                                <div class="input-group input-group-merge">
+                                    <span class="input-group-text"><i class="bx bx-user"></i></span>
+                                    <select name="siswa_id" id="siswaSelect" class="form-select @error('siswa_id') is-invalid @enderror" required>
+                                        <option value="">-- Pilih Siswa --</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            {{-- Tanggal --}}
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="tanggal">Tanggal Pemeriksaan</label>
+                                <div class="input-group input-group-merge">
+                                    <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+                                    <input type="date" name="tanggal" id="tanggal" class="form-control @error('tanggal') is-invalid @enderror" value="{{ old('tanggal', date('Y-m-d')) }}" required>
+                                </div>
+                            </div>
+
+                            {{-- Status --}}
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="status">Tindak Lanjut (Status)</label>
+                                <div class="input-group input-group-merge">
+                                    <span class="input-group-text"><i class="bx bx-git-branch"></i></span>
+                                    <select name="status" id="status" class="form-select @error('status') is-invalid @enderror" required>
+                                        <option value="">-- Pilih Status --</option>
+                                        <option value="kelas" {{ old('status') == 'kelas' ? 'selected' : '' }}>Kembali ke Kelas</option>
+                                        <option value="uks" {{ old('status') == 'uks' ? 'selected' : '' }}>Istirahat di UKS</option>
+                                        <option value="pulang" {{ old('status') == 'pulang' ? 'selected' : '' }}>Pulang</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            {{-- Keluhan --}}
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="keluhan">Keluhan Utama</label>
+                                <div class="input-group input-group-merge">
+                                    <span class="input-group-text"><i class="bx bx-error-alt"></i></span>
+                                    <input type="text" name="keluhan" id="keluhan" class="form-control @error('keluhan') is-invalid @enderror" placeholder="Contoh: Pusing, Demam" value="{{ old('keluhan') }}" required>
+                                </div>
+                            </div>
+
+                            {{-- Tindakan --}}
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="tindakan">Tindakan</label>
+                                <div class="input-group input-group-merge">
+                                    <span class="input-group-text"><i class="bx bx-first-aid"></i></span>
+                                    <textarea name="tindakan" id="tindakan" class="form-control @error('tindakan') is-invalid @enderror" rows="1" placeholder="Tindakan yang diberikan" required>{{ old('tindakan') }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Obat --}}
+                        <div class="row mb-3">
+                            <label class="form-label">Pemberian Obat (Opsional)</label>
+                            <div class="col-sm-7 mb-2">
+                                <div class="input-group input-group-merge">
+                                    <span class="input-group-text"><i class="bx bx-capsule"></i></span>
+                                    <select name="obat_id" class="form-select @error('obat_id') is-invalid @enderror">
+                                        <option value="">Pilih obat...</option>
+                                        @foreach ($obat as $data)
+                                            <option value="{{ $data->id }}" {{ old('obat_id') == $data->id ? 'selected' : '' }}>
+                                                {{ $data->nama_obat }} (Stok: {{ $data->stok }} {{ $data->unit }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="input-group input-group-merge">
+                                    <span class="input-group-text"><i class="bx bx-list-ol"></i></span>
+                                    <input type="number" name="jumlah" class="form-control @error('jumlah') is-invalid @enderror" placeholder="Jumlah" value="{{ old('jumlah') }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Petugas Pencatat</label>
+                            <div class="input-group input-group-merge">
+                                <span class="input-group-text bg-light"><i class="bx bx-user-check"></i></span>
+                                <input type="text" class="form-control bg-light" value="{{ auth()->user()->name }}" readonly>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{{ route('backend.rekam_medis.index') }}" class="btn btn-outline-secondary">
+                                <i class="bx bx-x me-1"></i> Batal
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4 shadow">
+                                <i class="bx bx-save me-1"></i> Simpan Rekam Medis
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="card-body">
-      {{-- Tampilkan error validasi --}}
-      @if ($errors->any())
-        <div class="alert alert-danger">
-          <ul class="mb-0">
-            @foreach ($errors->all() as $error)
-              <li>{{ $error }}</li>
-            @endforeach
-          </ul>
-        </div>
-      @endif
-
-      <form action="{{ route('backend.rekam_medis.store') }}" method="POST">
-        @csrf
-
-        {{-- Pilih Kelas --}}
-        <div class="mb-3">
-          <label class="col-sm-2 col-form-label">Pilih Kelas</label>
-          <select id="kelasSelect" name="kelas_id" class="form-control @error('kelas_id') is-invalid @enderror">
-            <option value="">-- Pilih Kelas --</option>
-            @foreach ($kelas as $k)
-              <option value="{{ $k->id }}" {{ old('kelas_id') == $k->id ? 'selected' : '' }}>{{ $k->nama_kelas }}</option>
-            @endforeach
-          </select>
-          @error('kelas_id')
-            <div class="invalid-feedback">{{ $message }}</div>
-          @enderror
-        </div>
-
-        {{-- Pilih Siswa --}}
-        <div class="mb-3">
-          <label class="col-sm-2 col-form-label">Pilih Siswa</label>
-          <select name="siswa_id" id="siswaSelect" class="form-control @error('siswa_id') is-invalid @enderror">
-            <option value="">-- Pilih Siswa --</option>
-          </select>
-          @error('siswa_id')
-            <div class="invalid-feedback">{{ $message }}</div>
-          @enderror
-        </div>
-
-        {{-- Tanggal --}}
-        <div class="row mb-3">
-          <label class="col-sm-2 col-form-label">Tanggal</label>
-          <div class="col-sm-10">
-            <input type="date" name="tanggal" class="form-control @error('tanggal') is-invalid @enderror" value="{{ old('tanggal') }}" required>
-            @error('tanggal')
-              <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-          </div>
-        </div>
-
-        {{-- Keluhan --}}
-        <div class="row mb-3">
-          <label class="col-sm-2 col-form-label">Keluhan</label>
-          <div class="col-sm-10">
-            <input type="text" name="keluhan" class="form-control @error('keluhan') is-invalid @enderror" placeholder="isi keluhan" value="{{ old('keluhan') }}" required>
-            @error('keluhan')
-              <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-          </div>
-        </div>
-
-        {{-- Tindakan --}}
-        <div class="row mb-3">
-          <label class="col-sm-2 col-form-label">Tindakan</label>
-          <div class="col-sm-10">
-            <textarea name="tindakan" class="form-control @error('tindakan') is-invalid @enderror" required>{{ old('tindakan') }}</textarea>
-            @error('tindakan')
-              <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-          </div>
-        </div>
-
-        {{-- Obat --}}
-        <div class="row mb-3">
-          <label class="col-sm-2 col-form-label">Obat</label>
-          <div class="col-sm-5">
-            <select name="obat_id" class="form-select @error('obat_id') is-invalid @enderror">
-              <option value="">Pilih obat</option>
-              @foreach ($obat as $data)
-                <option value="{{ $data->id }}">
-                  {{ $data->nama_obat }} 
-                  (stok: {{ $data->stok }} {{ $data->unit }})
-                </option>
-              @endforeach
-            </select>
-          </div>
-
-          <div class="col-sm-5">
-            <input type="number" name="jumlah" class="form-control @error('jumlah') is-invalid @enderror"
-              placeholder="Jumlah sesuai satuan obat">
-          </div>
-        </div>
-
-        {{-- Petugas --}}
-        <div class="row mb-3">
-          <label class="col-sm-2 col-form-label">Petugas</label>
-          <div class="col-sm-10">
-            <input type="text" class="form-control" value="{{ auth()->user()->name }}" readonly>
-          </div>
-        </div>
-
-        {{-- Status --}}
-        <div class="row mb-3">
-          <label class="col-sm-2 col-form-label">Status</label>
-          <div class="col-sm-10">
-            <input type="text" name="status" class="form-control @error('status') is-invalid @enderror" placeholder="isi status" value="{{ old('status') }}" required>
-            @error('status')
-              <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-          </div>
-        </div>
-
-        {{-- Tombol --}}
-        <div class="row justify-content-end">
-          <div class="col-sm-10">
-            <button type="submit" class="btn btn-primary">Simpan</button>
-            <a href="{{ route('backend.rekam_medis.index') }}" class="btn btn-secondary">Batal</a>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
 </div>
 @endsection
 
 @push('scripts')
 <script>
-  const oldSiswaId = @json(old('siswa_id'));
-  const oldKelasId = "{{ old('kelas_id') }}";
+    const oldSiswaId = @json(old('siswa_id'));
+    const oldKelasId = "{{ old('kelas_id') }}";
 
-  document.getElementById('kelasSelect').addEventListener('change', function () {
-    const kelasId = this.value;
-    const siswaSelect = document.getElementById('siswaSelect');
+    document.getElementById('kelasSelect').addEventListener('change', function () {
+        const kelasId = this.value;
+        const siswaSelect = document.getElementById('siswaSelect');
 
-    if (!kelasId) {
-      siswaSelect.innerHTML = '<option value="">-- Pilih Siswa --</option>';
-      return;
+        if (!kelasId) {
+            siswaSelect.innerHTML = '<option value="">-- Pilih Siswa --</option>';
+            return;
+        }
+
+        siswaSelect.innerHTML = '<option value="">-- Memuat data siswa... --</option>';
+
+        fetch(`/get-siswa-by-kelas/${kelasId}`)
+            .then(response => response.json())
+            .then(data => {
+                siswaSelect.innerHTML = '<option value="">-- Pilih Siswa --</option>';
+                data.forEach(siswa => {
+                    const selected = siswa.id == oldSiswaId ? 'selected' : '';
+                    siswaSelect.innerHTML += `<option value="${siswa.id}" ${selected}>${siswa.nama}</option>`;
+                });
+            })
+            .catch(error => {
+                console.error('Gagal memuat siswa:', error);
+                siswaSelect.innerHTML = '<option value="">-- Gagal memuat siswa --</option>';
+            });
+    });
+
+    if (oldKelasId) {
+        const kelasSelect = document.getElementById('kelasSelect');
+        kelasSelect.dispatchEvent(new Event('change'));
     }
-
-    siswaSelect.innerHTML = '<option value="">-- Memuat data siswa... --</option>';
-
-    fetch(`/get-siswa-by-kelas/${kelasId}`)
-      .then(response => response.json())
-      .then(data => {
-        siswaSelect.innerHTML = '<option value="">-- Pilih Siswa --</option>';
-        data.forEach(siswa => {
-          const selected = siswa.id == oldSiswaId ? 'selected' : '';
-          siswaSelect.innerHTML += `<option value="${siswa.id}" ${selected}>${siswa.nama}</option>`;
-        });
-      })
-      .catch(error => {
-        console.error('Gagal memuat siswa:', error);
-        siswaSelect.innerHTML = '<option value="">-- Gagal memuat siswa --</option>';
-      });
-  });
-
-  // Trigger otomatis kalau ada old value
-  if (oldKelasId) {
-    const kelasSelect = document.getElementById('kelasSelect');
-    kelasSelect.value = oldKelasId;
-    kelasSelect.dispatchEvent(new Event('change'));
-  }
 </script>
 @endpush

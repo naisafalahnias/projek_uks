@@ -100,10 +100,15 @@
 
       <!-- Image -->
       <div class="col-lg-6 position-relative align-self-start" data-aos="fade-up" data-aos-delay="200">
-        <img src="{{ asset('assets/frontend/img/about.jpg') }}" class="img-fluid" alt="UKS Medischool">
-        <!-- optional video, boleh dihapus -->
-        <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8"
-           class="glightbox pulsating-play-btn"></a>
+          <img src="{{ asset('assets/frontend/img/about.jpg') }}" class="img-fluid rounded-4 shadow" alt="UKS Medischool">
+          
+          <div class="position-absolute bottom-0 start-0 mb-4 ms-4 p-3 bg-white shadow rounded-3 d-flex align-items-center" style="z-index: 2; border-left: 5px solid #0d6efd;">
+              <i class="fa-solid fa-shield-heart text-primary fs-2 me-3"></i>
+              <div>
+                  <h6 class="mb-0 fw-bold">Terintegrasi</h6>
+                  <small class="text-muted">Data Aman & Real-time</small>
+              </div>
+          </div>
       </div>
 
       <!-- Content -->
@@ -160,71 +165,63 @@
 
 <!-- Stats Section -->
 <section id="stats" class="stats section light-background">
-
   <div class="container" data-aos="fade-up" data-aos-delay="100">
-
     <div class="row gy-4">
 
-      <!-- Total Siswa -->
       <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
         <i class="fa-solid fa-users"></i>
         <div class="stats-item">
           <span
             data-purecounter-start="0"
-            data-purecounter-end="420"
+            data-purecounter-end="{{ $totalSiswa }}"
             data-purecounter-duration="1"
             class="purecounter">
           </span>
           <p>Total Siswa</p>
         </div>
-      </div><!-- End Stats Item -->
+      </div>
 
-      <!-- Pemeriksaan Kesehatan -->
       <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
         <i class="fa-solid fa-notes-medical"></i>
         <div class="stats-item">
           <span
             data-purecounter-start="0"
-            data-purecounter-end="125"
+            data-purecounter-end="{{ $totalPemeriksaan }}"
             data-purecounter-duration="1"
             class="purecounter">
           </span>
           <p>Pemeriksaan Kesehatan</p>
         </div>
-      </div><!-- End Stats Item -->
+      </div>
 
-      <!-- Obat Tersedia -->
       <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
         <i class="fa-solid fa-pills"></i>
         <div class="stats-item">
           <span
             data-purecounter-start="0"
-            data-purecounter-end="35"
+            data-purecounter-end="{{ $totalObat }}"
             data-purecounter-duration="1"
             class="purecounter">
           </span>
           <p>Jenis Obat</p>
         </div>
-      </div><!-- End Stats Item -->
+      </div>
 
-      <!-- Petugas UKS -->
       <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
         <i class="fa-solid fa-user-nurse"></i>
         <div class="stats-item">
           <span
             data-purecounter-start="0"
-            data-purecounter-end="4"
+            data-purecounter-end="{{ $totalPetugas }}"
             data-purecounter-duration="1"
             class="purecounter">
           </span>
           <p>Petugas UKS</p>
         </div>
-      </div><!-- End Stats Item -->
+      </div>
 
     </div>
-
   </div>
-
 </section>
 <!-- /Stats Section -->
 

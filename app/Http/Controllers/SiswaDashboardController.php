@@ -7,88 +7,113 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Siswa;
 use App\Models\RekamMedis;
 use App\Models\PemeriksaanGizi;
+use App\Models\JadwalPemeriksaan;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class SiswaDashboardController extends Controller
 {
     /**
-     * Dashboard utama siswa
+     * Helper untuk ambil data siswa yang login biar gak ngetik berulang
      */
+    private function getSiswa()
+    {
+        return Siswa::findOrFail(Auth::user()->siswa_id);
+    }
+
     public function index()
     {
         $user = Auth::user();
+        $siswa = Siswa::with('kelas')->find($user->siswa_id);
 
-        // ambil data siswa berdasarkan user login
-        $siswa = Siswa::where('user_id', $user->id)->firstOrFail();
-
-        // ringkasan data
-        $rekamMedisCount = RekamMedis::where('siswa_id', $siswa->id)->count();
-        $giziTerakhir = PemeriksaanGizi::where('siswa_id', $siswa->id)
-                            ->latest()
-                            ->first();
-
-        return view('siswa.dashboard.index', compact(
-            'siswa',
-            'rekamMedisCount',
-            'giziTerakhir'
-        ));
-    }
-
-    /**
-     * List rekam medis siswa (READ ONLY)
-     */
-    public function rekamMedis()
-    {
-        $user = Auth::user();
-        $siswa = Siswa::where('user_id', $user->id)->firstOrFail();
-
+        if (!$siswa) {
+            return "Akun Anda belum dihubungkan ke data profil Siswa. Hubungi Admin.";
+        }
+        
+        // 1. Variabel Angka (Untuk Card "Total Pemeriksaan")
+        $rekamMedisCount = RekamMedis::where('siswa_id', $siswa->id)->count(); 
+        
+        // 2. Variabel Data (Untuk Tabel "Pemeriksaan Terbaru") 
+        // INI YANG TADI KURANG: Kita ambil datanya, bukan cuma hitung jumlahnya.
         $rekamMedis = RekamMedis::where('siswa_id', $siswa->id)
-                        ->orderBy('tanggal', 'desc')
+                        ->latest('tanggal')
+                        ->take(5)
+                        ->get();
+               
+        $riwayatGizi = PemeriksaanGizi::where('siswa_id', $siswa->id)
+                        ->where('status', 'published') 
+                        ->latest('tanggal')
+                        ->take(5)
                         ->get();
 
-        return view('siswa.rekam-medis.index', compact(
+        $giziTerakhir = $riwayatGizi->first();
+
+        $jadwalMendatang = JadwalPemeriksaan::where('kelas_id', $siswa->kelas_id)
+                            ->where('tanggal', '>=', now())
+                            ->orderBy('tanggal', 'asc')
+                            ->get();
+
+        // Pastikan 'rekamMedis' (datanya) masuk ke compact
+        return view('tes_dashboard.siswa', compact(
             'siswa',
-            'rekamMedis'
+            'rekamMedisCount', 
+            'rekamMedis', 
+            'giziTerakhir',
+            'riwayatGizi',
+            'jadwalMendatang'
         ));
     }
+    
+    public function rekamMedis()
+    {
+        $siswa = $this->getSiswa(); //
+        
+        // Sesuaikan nama variabel menjadi $rekam_medis (pakai underscore)
+        $rekam_medis = RekamMedis::where('siswa_id', $siswa->id)
+                        ->with('siswa.kelas', 'rekam_medis_obat.obat', 'user') // Tambahkan with agar datanya lengkap seperti di Admin
+                        ->latest('tanggal')
+                        ->get();
+        // Panggil view backend admin
+        return view('backend.rekam_medis.index', compact('siswa', 'rekam_medis'));
+    }   
 
-    /**
-     * Download PDF rekam medis
-     */
     public function downloadPdf($id)
     {
-        $user = Auth::user();
-        $siswa = Siswa::where('user_id', $user->id)->firstOrFail();
+        $siswa = $this->getSiswa();
+        $rekamMedis = RekamMedis::where('id', $id)->where('siswa_id', $siswa->id)->firstOrFail();
 
-        $rekamMedis = RekamMedis::where('id', $id)
-                        ->where('siswa_id', $siswa->id)
-                        ->firstOrFail();
-
-        $pdf = Pdf::loadView('siswa.rekam-medis.pdf', [
-            'siswa' => $siswa,
-            'rekamMedis' => $rekamMedis
-        ]);
-
-        return $pdf->download('rekam-medis-'.$siswa->nama.'.pdf');
+        $pdf = Pdf::loadView('siswa.rekam-medis.pdf', compact('siswa', 'rekamMedis'));
+        return $pdf->download("Rekam-Medis-{$siswa->nama}.pdf");
     }
 
-    /**
-     * Download PDF kebutuhan kalori / pemeriksaan gizi
-     */
     public function kaloriPdf($id)
     {
-        $user = Auth::user();
-        $siswa = Siswa::where('user_id', $user->id)->firstOrFail();
-
+        $siswa = $this->getSiswa();
         $gizi = PemeriksaanGizi::where('id', $id)
-                    ->where('siswa_id', $siswa->id)
-                    ->firstOrFail();
+                ->where('siswa_id', $siswa->id)
+                ->where('status', 'published')
+                ->firstOrFail();
 
-        $pdf = Pdf::loadView('siswa.gizi.pdf', [
-            'siswa' => $siswa,
-            'gizi' => $gizi
-        ]);
+        $pdf = Pdf::loadView('siswa.gizi.pdf', compact('siswa', 'gizi'));
+        return $pdf->download("Kebutuhan-Kalori-{$siswa->nama}.pdf");
+    }
 
-        return $pdf->download('kebutuhan-kalori-'.$siswa->nama.'.pdf');
+    public function pemeriksaanGizi()
+    {
+        $siswa = $this->getSiswa();
+        
+        // 1. Ambil status gizi terakhir buat ditampilin di widget atas
+        $giziTerakhir = PemeriksaanGizi::where('siswa_id', $siswa->id)
+                        ->where('status', 'published')
+                        ->latest('tanggal')
+                        ->first();
+
+        // 2. Ambil data Kebutuhan Kalori (ini yang jadi tabel utama)
+        // Sesuaikan 'pemeriksaan_kalori' dengan nama tabel/model kamu di backend admin
+        $pemeriksaan_kalori = \App\Models\PemeriksaanKalori::where('siswa_id', $siswa->id)
+                            ->latest('tanggal')
+                            ->get();
+
+        // Kita tetap arahkan ke view backend admin agar tampilannya seragam
+        return view('backend.pemeriksaan_kalori.index', compact('giziTerakhir', 'pemeriksaan_kalori', 'siswa'));
     }
 }

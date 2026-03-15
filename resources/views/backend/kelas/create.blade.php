@@ -1,44 +1,67 @@
 @extends('layouts.backend')
 
 @section('content')
-<div class="container mt-5" style="max-width: 10000px">
-  <div class="card mb-4">
-    <div class="card-header d-flex align-items-center justify-content-between">
-      <h5 class="mb-0">Tambah Data Kelas</h5>
-      <small class="text-muted float-end"></small>
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Form /</span> Tambah Data Kelas</h4>
+
+    <div class="row">
+        <div class="col-xl">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center border-bottom mb-3">
+                    <h5 class="mb-0 text-primary">Input Data Kelas Baru</h5>
+                    <small class="text-muted float-end">Pastikan nama kelas unik</small>
+                </div>
+                <div class="card-body">
+                    {{-- Tampilkan error validasi dengan style Sneat --}}
+                    @if ($errors->any())
+                        <div class="alert alert-label-danger alert-dismissible fade show" role="alert">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    <form action="{{ route('backend.kelas.store') }}" method="POST">
+                        @csrf
+
+                        <div class="mb-4">
+                            <label class="form-label" for="nama_kelas">Nama Kelas</label>
+                            <div class="input-group input-group-merge shadow-none">
+                                <span id="icon-kelas" class="input-group-text bg-label-primary">
+                                    <i class="bx bx-buildings"></i>
+                                </span>
+                                <input
+                                    type="text"
+                                    name="nama_kelas"
+                                    class="form-control"
+                                    id="nama_kelas"
+                                    placeholder="Contoh: XII RPL 1 atau X IPA 2"
+                                    aria-label="Nama Kelas"
+                                    aria-describedby="icon-kelas"
+                                    required
+                                    value="{{ old('nama_kelas') }}"
+                                />
+                            </div>
+                            <div class="form-text">Gunakan format standar sekolah untuk penamaan.</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 d-flex justify-content-start gap-2">
+                                <button type="submit" class="btn btn-primary d-flex align-items-center">
+                                    <i class="bx bx-save me-1"></i> Simpan Data
+                                </button>
+                                <a href="{{ route('backend.kelas.index') }}" class="btn btn-outline-secondary">
+                                    <i class="bx bx-arrow-back me-1"></i> Kembali
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="card-body">
-      {{-- Tampilkan error validasi --}}
-      @if ($errors->any())
-        <div class="alert alert-danger">
-          <ul class="mb-0">
-            @foreach ($errors->all() as $error)
-              <li>{{ $error }}</li>
-            @endforeach
-          </ul>
-        </div>
-      @endif
-
-      <form action="{{ route('backend.kelas.store') }}" method="POST">
-        @csrf
-
-        {{-- Kelas --}}
-        <div class="row mb-3">
-          <label class="col-sm-2 col-form-label">Kelas</label>
-          <div class="col-sm-10">
-            <input type="text" name="nama_kelas" class="form-control" placeholder="isi kelas" required>
-          </div>
-        </div>
-
-        {{-- Tombol --}}
-        <div class="row justify-content-end">
-          <div class="col-sm-10">
-            <button type="submit" class="btn btn-primary">Simpan</button>
-            <a href="{{ route('backend.kelas.index') }}" class="btn btn-secondary">Batal</a>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
 </div>
 @endsection

@@ -32,7 +32,7 @@ class HomeController extends Controller
         } elseif ($user->role === 'petugas') {
             return redirect('petugas');
         } elseif ($user->role === 'siswa') {
-            return redirect('dashboard/siswa');
+            return redirect('/siswa/dashboard');
         } else {
             return abort(403, 'Role tidak dikenal.');
         }

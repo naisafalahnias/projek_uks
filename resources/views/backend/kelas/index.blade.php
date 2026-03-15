@@ -1,47 +1,91 @@
 @extends('layouts.backend')
 
 @section('content')
-<div class="container mt-5" style="max-width: 10000px"> {{-- Biar tampilannya lebih ramping --}}
-  <div class="card shadow-sm">
-  <div class="d-flex justify-content-between align-items-center">
-    <h5 class="card-header mb-0">Data Kelas</h5>
-    <a href="{{ route('backend.kelas.create') }}" class="btn btn-primary me-4 mt-2">Tambah data</a>
-  </div>
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4">
+        <span class="text-muted fw-light">Manajemen Akademik /</span> Daftar Kelas
+    </h4>
 
-  <div class="table-responsive text-nowrap p-3">
-    <table class="table ">
-      <thead class="table-light">
-        <tr>
-          <th>Nama Kelas</th>
-          <th>Action</th>
-        </tr>
-      </thead>
+    <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center border-bottom mb-3">
+            <h5 class="m-0 text-primary fw-bold">
+                <i class="bx bx-list-ul me-2"></i>Data Seluruh Kelas
+            </h5>
+            <a href="{{ route('backend.kelas.create') }}" class="btn btn-primary shadow">
+                <i class="bx bx-plus-circle me-1"></i> Tambah Kelas
+            </a>
+        </div>
 
-      <tbody class="table-border-bottom-0">
-        @foreach ($kelas as $data)
-        <tr>
-          <td>{{ $data->nama_kelas }}</td>
-          <td>
-            <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                <i class="bx bx-dots-vertical-rounded"></i>
-              </button>
-              <div class="dropdown-menu">
-                <form action="{{ route('backend.kelas.destroy', $data->id) }}" method="POST" onsubmit="return confirm('Yakin mau hapus?')">
-                  @csrf
-                  @method('DELETE')
-                  <button class="dropdown-item" type="submit">
-                    <i class="bx bx-trash me-2"></i> Hapus
-                  </button>
-                </form>
-              </div>
-            </div>
-          </td>
-        </tr>
-        @endforeach
-      </tbody>
-    </table>
-  </div>
-  </div>
+        <div class="table-responsive text-nowrap p-2">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr class="text-nowrap bg-label-secondary">
+                        <th style="width: 10%">No</th>
+                        <th>Identitas Kelas</th>
+                        <th>Status</th>
+                        <th style="width: 15%">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="table-border-bottom-0">
+                    @forelse ($kelas as $key => $data)
+                    <tr>
+                        <td><strong>{{ $key + 1 }}</strong></td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar flex-shrink-0 me-3">
+                                    <span class="avatar-initial rounded-circle bg-label-info">
+                                        <i class="bx bx-home-alt"></i>
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="fw-bold d-block">{{ $data->nama_kelas }}</span>
+                                    <small class="text-muted">ID: #CLS-0{{ $data->id }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-label-success">Aktif</span>
+                        </td>
+                        <td>
+                            <div class="dropdown">
+                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="{{ route('backend.kelas.edit', $data->id) }}">
+                                        <i class="bx bx-edit-alt me-1 text-warning"></i> Edit
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <form action="{{ route('backend.kelas.destroy', $data->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="dropdown-item text-danger" type="submit">
+                                            <i class="bx bx-trash me-1"></i> Hapus
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="4" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="bx bx-info-circle mb-2" style="font-size: 3rem"></i>
+                                <p>Belum ada data kelas yang terdaftar.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        
+        @if(method_exists($kelas, 'links'))
+        <div class="card-footer d-flex justify-content-end">
+            {{ $kelas->links() }}
+        </div>
+        @endif
+    </div>
 </div>
 @endsection

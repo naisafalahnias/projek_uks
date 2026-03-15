@@ -30,16 +30,6 @@
                       <i class="bi bi-speedometer2 me-1"></i> Dashboard
                     </a>
                   </li>
-                  <li>
-                    <a href="{{ route('siswa.rekam_medis') }}">
-                      <i class="bi bi-file-medical me-1"></i> Rekam Medis
-                    </a>
-                  </li>
-                  <li>
-                    <a href="{{ route('siswa.dashboard') }}#gizi">
-                      <i class="bi bi-activity me-1"></i> Pemeriksaan Gizi
-                    </a>
-                  </li>
                 </ul>
               </li>
             @endif

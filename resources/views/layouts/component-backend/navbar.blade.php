@@ -40,7 +40,12 @@
                         </div>
                       </a>
                     </li>
-                    
+                    <li>
+                      <a class="dropdown-item" href="{{ url('/') }}">
+                        <i class="bx bx-home-circle me-2"></i>
+                        <span class="align-middle">Kembali</span>
+                      </a>
+                    </li> 
                     <li>
                       <div class="dropdown-divider"></div>
                     </li>

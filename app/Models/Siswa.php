@@ -7,7 +7,8 @@ use Carbon\Carbon;
 
 class Siswa extends Model
 {
-    public $fillable = ['nama','tanggal_lahir', 'kelas_id', 'jenis_kelamin','user_id'];
+    // Hapus 'user_id' dari sini karena kita pakainya 'siswa_id' di tabel users
+    public $fillable = ['nama','tanggal_lahir', 'kelas_id', 'jenis_kelamin'];
 
     public function kelas()
     {
@@ -18,9 +19,13 @@ class Siswa extends Model
         return $this->hasMany(RekamMedis::class);
     }
 
+    /**
+     * Balikan Relasi: Satu profil siswa punya satu akun login (User)
+     * Kita kasih tahu Laravel kalau foreign key-nya ada di tabel 'users' kolom 'siswa_id'
+     */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasOne(User::class, 'siswa_id');
     }
 
     public function getUsiaAttribute()
@@ -41,5 +46,4 @@ class Siswa extends Model
     public function kondisi_kesehatan(){
         return $this->hasMany(KondisiKesehatan::class);
     }
-
 }

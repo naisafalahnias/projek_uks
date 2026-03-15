@@ -32,9 +32,12 @@ class SiswaLoginController extends Controller
             'role'     => 'siswa'
         ];
 
+        // Ganti bagian ini di dalam public function login
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->route('siswa.dashboard');
+            
+            // Ubah dari 'siswa.dashboard' ke 'landing'
+            return redirect()->route('landing'); 
         }
 
         return back()->withErrors([

@@ -73,7 +73,11 @@
     <div class="layout-wrapper layout-content-navbar">
       <div class="layout-container">
         <!-- Menu -->
-        @include('layouts.component-backend.sidebar')
+        @if(auth()->check() && auth()->user()->role === 'siswa')
+            @include('layouts.siswa-component.sidebar') 
+        @else
+            @include('layouts.component-backend.sidebar')
+        @endif
         <!-- / Menu -->
 
         <!-- Layout container -->

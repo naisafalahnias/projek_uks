@@ -18,15 +18,16 @@ class LoginController extends Controller
         $role = auth()->user()->role;
 
         if ($role === 'admin') {
-            return '/admin';
+            return route('admin.dashboard');
         }
 
         if ($role === 'petugas') {
-            return '/petugas';
+            return route('petugas.dashboard');
         }
 
-        return '/home'; // siswa
+        return route('siswa.dashboard');
     }
+
 
     /**
      * Redirect setelah LOGOUT
