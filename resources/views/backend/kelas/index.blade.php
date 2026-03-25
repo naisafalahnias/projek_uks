@@ -56,13 +56,15 @@
                                         <i class="bx bx-edit-alt me-1 text-warning"></i> Edit
                                     </a>
                                     <div class="dropdown-divider"></div>
-                                    <form action="{{ route('backend.kelas.destroy', $data->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                    
+                                    {{-- Tombol Hapus --}}
+                                    <form action="{{ route('backend.kelas.destroy', $data->id) }}" method="POST" id="form-delete-{{ $data->id }}" class="d-none">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="dropdown-item text-danger" type="submit">
-                                            <i class="bx bx-trash me-1"></i> Hapus
-                                        </button>
                                     </form>
+                                    <button type="button" class="dropdown-item text-danger" onclick="confirmDelete('{{ $data->id }}')">
+                                        <i class="bx bx-trash me-1"></i> Hapus
+                                    </button>
                                 </div>
                             </div>
                         </td>
@@ -89,3 +91,35 @@
     </div>
 </div>
 @endsection
+
+{{-- TARUH SCRIPT DI LUAR SECTION CONTENT --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Yakin mau hapus?',
+            text: "Data kelas ini nggak bisa dikembalikan lagi lho!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#696cff',
+            cancelButtonColor: '#ff3e1d',
+            confirmButtonText: 'Ya, Hapus saja!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('form-delete-' + id).submit();
+            }
+        })
+    }
+
+    // Notifikasi sukses (jika ada session success)
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Mantap!',
+            text: "{{ session('success') }}",
+            showConfirmButton: false,
+            timer: 1500
+        });
+    @endif
+</script>

@@ -42,4 +42,16 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
         $this->middleware('auth')->only('logout');
     }
+
+    protected function credentials(Request $request)
+    {
+        $credentials = $request->only($this->username(), 'password');
+        
+        // Paksa agar user yang login di sini BUKAN siswa
+        // (Asumsi admin dan petugas ada di tabel users yang sama)
+        return array_merge($credentials, ['role' => ['admin', 'petugas']]);
+        
+        // Atau jika hanya admin:
+        // return array_merge($credentials, ['role' => 'admin']);
+    }
 }

@@ -22,39 +22,40 @@ class SiswaLoginController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email'    => 'required', // fleksibel (email / username)
+            'email'    => 'required|email',
             'password' => 'required'
         ]);
 
+        // Kita login lewat tabel 'users' (guard default), 
+        // tapi kita paksa harus yang role-nya 'siswa'
         $credentials = [
             'email'    => $request->email,
             'password' => $request->password,
-            'role'     => 'siswa'
+            'role'     => 'siswa' 
         ];
 
-        // Ganti bagian ini di dalam public function login
+        // Gunakan Auth biasa (guard web), tidak perlu ->guard('siswa')
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             
-            // Ubah dari 'siswa.dashboard' ke 'landing'
             return redirect()->route('landing'); 
         }
 
         return back()->withErrors([
-            'email' => 'Email / Username atau password salah'
+            'email' => 'Email atau password salah, atau Anda bukan siswa.'
         ])->withInput();
     }
-
     /**
      * logout siswa
      */
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::logout(); 
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('siswa.login');
+        // Redirect ke landing page
+        return redirect()->route('landing');
     }
 }

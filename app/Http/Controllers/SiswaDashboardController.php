@@ -79,9 +79,20 @@ class SiswaDashboardController extends Controller
     public function downloadPdf($id)
     {
         $siswa = $this->getSiswa();
-        $rekamMedis = RekamMedis::where('id', $id)->where('siswa_id', $siswa->id)->firstOrFail();
+        
+        // Ambil data tunggal
+        $data_tunggal = RekamMedis::with('siswa.kelas')
+                        ->where('id', $id)
+                        ->where('siswa_id', $siswa->id)
+                        ->firstOrFail();
 
-        $pdf = Pdf::loadView('siswa.rekam-medis.pdf', compact('siswa', 'rekamMedis'));
+        // Ubah ke format Collection (masukkan ke dalam array) 
+        // supaya @forelse di blade tidak error
+        $rekam_medis = collect([$data_tunggal]);
+
+        // Panggil view backend
+        $pdf = Pdf::loadView('backend.rekam_medis.pdf', compact('siswa', 'rekam_medis'));
+        
         return $pdf->download("Rekam-Medis-{$siswa->nama}.pdf");
     }
 

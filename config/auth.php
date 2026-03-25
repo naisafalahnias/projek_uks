@@ -40,6 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'siswa' => [
+        'driver' => 'session',
+        'provider' => 'siswas', // Nama provider bebas, tapi harus sinkron dengan poin 2
+        ],
     ],
 
     /*
@@ -65,10 +70,10 @@ return [
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'siswas' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\Siswa::class, // Pastikan path model Siswa sudah benar
+        ],
     ],
 
     /*

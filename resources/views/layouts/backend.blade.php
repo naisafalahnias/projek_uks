@@ -42,6 +42,7 @@
 
     <link rel="stylesheet" href="{{ asset('assets/backend/vendor/libs/apex-charts/apex-charts.css') }}" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         a {
             text-decoration: none;
@@ -134,7 +135,10 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @stack('scripts')
+    @stack('scripts')
+    
     <script>
+    // 1. Notifikasi Sukses
     @if (session('success'))
         Swal.fire({
             icon: 'success',
@@ -145,6 +149,7 @@
         });
     @endif
 
+    // 2. Notifikasi Error Session
     @if (session('error'))
         Swal.fire({
             icon: 'error',
@@ -153,7 +158,50 @@
             showConfirmButton: true
         });
     @endif
-</script>
 
+    // 3. Notifikasi Error Validasi Laravel (Pindahkan ke sini tanpa tag <script> tambahan)
+    @if ($errors->any())
+        Swal.fire({
+            icon: 'error',
+            title: 'Validasi Gagal',
+            html: `
+                <ul style="text-align: left;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            `,
+        });
+    @endif
+
+    // 4. Fitur Delete Global
+    $(document).on('click', '.btn-delete', function(e) {
+        e.preventDefault();
+        let form = $(this).closest('form');
+        let name = $(this).data('name') || "data ini";
+
+        Swal.fire({
+            title: "Yakin mau hapus?",
+            text: "Kamu akan menghapus " + name + ". Data yang dihapus tidak bisa dikembalikan!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Ya, Hapus!",
+            cancelButtonText: "Batal"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Mohon Tunggu...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                form.submit();
+            }
+        });
+    });
+    </script>
   </body>
 </html>

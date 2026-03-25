@@ -133,6 +133,33 @@
 
     bbInput.addEventListener('input', calculateBMI);
     tbInput.addEventListener('input', calculateBMI);
-</script>
+        $(document).ready(function() {
+            // Targetkan semua form yang ada di halaman ini
+            $('form').on('submit', function(e) {
+                // Cek validasi HTML5 (required dsb)
+                if (this.checkValidity()) {
+                    Swal.fire({
+                        title: 'Sedang Menyimpan...',
+                        text: 'Mohon tunggu sebentar, data pemeriksaan gizi sedang diproses.',
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    // Biarkan form berlanjut kirim data
+                } else {
+                    // Jika ada field required yang belum diisi, 
+                    // biarkan browser yang kasih peringatan standar (atau ganti pakai Swal error)
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Harap lengkapi semua kolom yang wajib diisi!',
+                    });
+                    e.preventDefault(); // Stop pengiriman
+                }
+            });
+        });
+    </script>
 @endpush
 @endsection

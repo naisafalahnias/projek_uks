@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>@yield('title', 'UKS')</title>
+  <title>@yield('title', 'MediSchool')</title>
 
   <!-- Favicons -->
   <link href="{{ asset('assets/frontend/img/favicon.png') }}" rel="icon">

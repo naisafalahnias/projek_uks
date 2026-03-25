@@ -2,17 +2,24 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Form /</span> Tambah Data Kelas</h4>
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Form /</span> Edit Data Kelas</h4>
 
     <div class="row">
         <div class="col-xl">
             <div class="card mb-4 shadow-sm">
                 <div class="card-header d-flex justify-content-between align-items-center border-bottom mb-3">
-                    <h5 class="mb-0 text-primary">Input Data Kelas Baru</h5>
-                    <small class="text-muted float-end">Pastikan nama kelas unik</small>
+                    <h5 class="mb-0 text-primary">Perbarui Data Kelas</h5>
+                    <small class="text-muted float-end">ID Kelas: #{{ $kelas->id }}</small>
                 </div>
                 <div class="card-body">
-                    {{-- Tampilkan error validasi dengan style Sneat --}}
+                    
+                    @if (session('info'))
+                        <div class="alert alert-label-info alert-dismissible fade show" role="alert">
+                            {{ session('info') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+                    {{-- Tampilkan error validasi --}}
                     @if ($errors->any())
                         <div class="alert alert-label-danger alert-dismissible fade show" role="alert">
                             <ul class="mb-0">
@@ -24,8 +31,9 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('backend.kelas.store') }}" method="POST">
+                    <form action="{{ route('backend.kelas.update', $kelas->id) }}" method="POST">
                         @csrf
+                        @method('PUT') {{-- WAJIB ADA UNTUK PROSES UPDATE --}}
 
                         <div class="mb-4">
                             <label class="form-label" for="nama_kelas">Nama Kelas</label>
@@ -42,19 +50,19 @@
                                     aria-label="Nama Kelas"
                                     aria-describedby="icon-kelas"
                                     required
-                                    value="{{ old('nama_kelas') }}"
+                                    value="{{ old('nama_kelas', $kelas->nama_kelas) }}"
                                 />
                             </div>
-                            <div class="form-text">Gunakan format standar sekolah untuk penamaan.</div>
+                            <div class="form-text">Ubah nama kelas jika terdapat kesalahan penulisan.</div>
                         </div>
 
                         <div class="row">
                             <div class="col-12 d-flex justify-content-start gap-2">
                                 <button type="submit" class="btn btn-primary d-flex align-items-center">
-                                    <i class="bx bx-save me-1"></i> Simpan Data
+                                    <i class="bx bx-refresh me-1"></i> Perbarui Data
                                 </button>
                                 <a href="{{ route('backend.kelas.index') }}" class="btn btn-outline-secondary">
-                                    <i class="bx bx-arrow-back me-1"></i> Kembali
+                                    <i class="bx bx-arrow-back me-1"></i> Batal
                                 </a>
                             </div>
                         </div>
@@ -65,37 +73,3 @@
     </div>
 </div>
 @endsection
-@push('scripts')
-<script>
-    $(document).ready(function() {
-        // Ambil form
-        const formKelas = $('form[action="{{ route("backend.kelas.store") }}"]');
-
-        formKelas.on('submit', function(e) {
-            e.preventDefault(); // Tahan dulu pengirimannya
-
-            // Cek manual validasi HTML5 (required)
-            if (this.checkValidity()) {
-                Swal.fire({
-                    title: 'Sedang Menyimpan...',
-                    text: 'Mohon tunggu sebentar, data sedang diproses.',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-                
-                // Jika oke, baru kirim beneran
-                this.submit();
-            } else {
-                // Jika field kosong tapi maksa klik simpan
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Harap isi nama kelas terlebih dahulu!',
-                });
-            }
-        });
-    });
-</script>
-@endpush

@@ -32,6 +32,38 @@ class KelasController extends Controller
         return redirect()->route('backend.kelas.index')->with('success', 'Kelas berhasil ditambahkan');
     }
 
+    public function edit($id)
+    {
+        $kelas = Kelas::findOrFail($id);
+        return view('backend.kelas.edit', compact('kelas'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'nama_kelas' => 'required',
+        ]);
+
+        $kelas = Kelas::findOrFail($id);
+        
+        // Isi object model dengan data baru (tapi jangan di-save dulu)
+        $kelas->fill($request->only('nama_kelas'));
+
+        // Cek apakah data di object ini berbeda dengan di database
+        if (!$kelas->isDirty()) {
+            return redirect()
+                ->route('backend.kelas.index')
+                ->with('info', 'Anda tidak mengubah data apa pun.');
+        }
+
+        $namaLama = $kelas->getOriginal('nama_kelas'); // Ambil nama asli sebelum di-fill
+        $kelas->save();
+
+        logAktivitas("Mengubah Kelas dari {$namaLama} menjadi {$kelas->nama_kelas}", 'kelas');
+
+        return redirect()->route('backend.kelas.index')->with('success', 'Kelas berhasil diperbarui');
+    }
+
     public function destroy($id)
     {
         $kelas = Kelas::findOrFail($id);

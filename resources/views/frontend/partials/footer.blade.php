@@ -6,15 +6,15 @@
       {{-- ABOUT --}}
       <div class="col-lg-4 col-md-6 footer-about">
         <a href="{{ route('landing') }}" class="logo d-flex align-items-center">
-          <span class="sitename">UKS Sekolah</span>
+          <span class="sitename">MediSchool</span>
         </a>
 
         <div class="footer-contact pt-3">
-          <p>SMP / SMA Contoh</p>
-          <p>Jl. Pendidikan No. 10</p>
+          <p>SMK ASSALAAM BANDUNG</p>
+          <p>Jl. Situ Tarate, Cibaduyut, Dayeuhkolot, Kota Bandung, Jawa Barat 40265</p>
           <p class="mt-3">
             <strong>Telepon:</strong>
-            <span>08xxxxxxxxxx</span>
+            <span>(022) 5420220</span>
           </p>
           <p>
             <strong>Email:</strong>
@@ -23,8 +23,7 @@
         </div>
 
         <div class="social-links d-flex mt-4">
-          <a href="#"><i class="bi bi-instagram"></i></a>
-          <a href="#"><i class="bi bi-facebook"></i></a>
+          <a href="https://www.instagram.com/smkassalaam/?__pwa=1"><i class="bi bi-instagram"></i></a>
         </div>
       </div>
 
@@ -50,28 +49,6 @@
         </ul>
       </div>
 
-      {{-- AKSES --}}
-      <div class="col-lg-3 col-md-3 footer-links">
-        <h4>Akses Sistem</h4>
-        <ul>
-          @guest
-            <li><a href="{{ route('login') }}">Login</a></li>
-          @endguest
-
-          @auth
-            <li>
-              <a href="{{ auth()->user()->role === 'admin'
-                ? route('admin.dashboard')
-                : (auth()->user()->role === 'petugas'
-                    ? route('petugas.dashboard')
-                    : route('home')) }}">
-                Dashboard
-              </a>
-            </li>
-          @endauth
-        </ul>
-      </div>
-
     </div>
   </div>
 
@@ -83,8 +60,8 @@
     </p>
 
     <div class="credits">
-      Template by
-      <a href="https://bootstrapmade.com/" target="_blank">BootstrapMade</a>
+      by
+      <a href="https://www.instagram.com/naisanaic/?__pwa=1" target="_blank">Naisafalah</a>
     </div>
   </div>
 

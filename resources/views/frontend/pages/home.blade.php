@@ -325,41 +325,35 @@
 <!-- /Services Section -->
 
 <!-- Appointment / CTA Section -->
-<section id="appointment" class="appointment section light-background">
+@auth
+    @if(auth()->user()->role === 'siswa')
+        <section id="appointment" class="appointment section light-background">
+            <div class="container text-center">
+                <div class="alert alert-success d-inline-block">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Halo **{{ auth()->user()->name }}**, Anda sudah login. Silakan cek dashboard Anda.
+                </div>
+            </div>
+        </section>
+    @endif
+@endauth
 
-  <div class="container" data-aos="fade-up">
-
-    <div class="row justify-content-center">
-      <div class="col-lg-8 text-center">
-
-        <h2>Akses Layanan UKS Medischool</h2>
-        <p class="mb-4">
-          Sistem UKS Medischool membantu petugas UKS dalam mengelola data kesehatan,
-          pemeriksaan, dan rekam medis siswa secara terpusat dan efisien.
-        </p>
-
-        <div class="d-flex justify-content-center gap-3 flex-wrap">
-
-          <!-- Login Siswa -->
-          <a href="{{ route('siswa.login') }}" class="btn btn-primary btn-lg">
-            <i class="bi bi-person-check me-2"></i>
-            Login Siswa
-          </a>
-
-          <!-- Info UKS -->
-          <a href="#services" class="btn btn-outline-primary btn-lg">
-            <i class="bi bi-info-circle me-2"></i>
-            Lihat Layanan UKS
-          </a>
-
+@guest
+    <section id="appointment" class="appointment section light-background">
+        <div class="container" data-aos="fade-up">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h2>Akses Layanan UKS Medischool</h2>
+                    <p class="mb-4">Sistem UKS Medischool membantu petugas UKS dalam mengelola data...</p>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a href="{{ route('siswa.login') }}" class="btn btn-primary btn-lg">Login Siswa</a>
+                        <a href="#services" class="btn btn-outline-primary btn-lg">Lihat Layanan UKS</a>
+                    </div>
+                </div>
+            </div>
         </div>
-
-      </div>
-    </div>
-
-  </div>
-
-</section>
+    </section>
+@endguest
 <!-- /Appointment / CTA Section -->
 
 <!-- UKS Services Section -->
@@ -558,7 +552,7 @@
 <!-- /FAQ Section -->
 
 <!-- Testimonials Section -->
-<section id="testimonials" class="testimonials section">
+{{-- <section id="testimonials" class="testimonials section">
 
   <div class="container section-title" data-aos="fade-up">
     <h2>Testimoni</h2>
@@ -618,11 +612,11 @@
 
   </div>
 
-</section>
+</section> --}}
 <!-- /Testimonials Section -->
 
 <!-- Gallery Section -->
-<section id="gallery" class="gallery section">
+{{-- <section id="gallery" class="gallery section">
 
   <div class="container section-title" data-aos="fade-up">
     <h2>Galeri Kegiatan UKS</h2>
@@ -659,7 +653,7 @@
     </div>
   </div>
 
-</section>
+</section> --}}
 <!-- /Gallery Section -->
 
 <!-- Contact Section -->

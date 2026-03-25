@@ -15,7 +15,15 @@
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
                   <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
-                      <img src="{{ asset(Auth::user()->role === 'admin' ? 'assets/backend/img/avatars/admin1.jpeg' : 'assets/backend/img/avatars/petugas.jpeg') }}" alt class="w-px-40 h-auto rounded-circle" />
+                      <img src="{{ asset(
+                          Auth::user()->role === 'admin' 
+                              ? 'assets/backend/img/avatars/admin1.jpeg' 
+                              : (Auth::user()->role === 'siswa' 
+                                  ? (Auth::user()->siswa->jenis_kelamin === 'Perempuan' 
+                                      ? 'assets/backend/img/avatars/male.jpeg' 
+                                      : 'assets/backend/img/avatars/female.jpeg')
+                                  : 'assets/backend/img/avatars/petugas1.jpeg')
+                      ) }}" alt class="w-px-40 h-auto rounded-circle" />                    
                     </div>
                   </a>
                   <ul class="dropdown-menu dropdown-menu-end">
@@ -50,7 +58,7 @@
                       <div class="dropdown-divider"></div>
                     </li>
                     <li>
-                      <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                      <form action="{{ route('siswa.logout') }}" method="POST" class="d-inline">
                         @csrf
                         <button type="submit" class="dropdown-item">
                           <i class="bx bx-power-off me-2"></i>

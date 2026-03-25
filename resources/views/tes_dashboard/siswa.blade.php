@@ -11,7 +11,7 @@
             </div>
             <div>
                 <h4 class="text-white mb-0 fw-bold">{{ $siswa->nama }}</h4>
-                <p class="mb-0 opacity-75">NISN: {{ $siswa->nisn }} | Kelas: {{ $siswa->kelas->nama_kelas ?? '-' }}</p>
+                <p class="mb-0 opacity-75">Kelas: {{ $siswa->kelas->nama_kelas ?? '-' }}</p>
             </div>
         </div>
     </div>

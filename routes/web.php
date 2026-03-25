@@ -39,15 +39,12 @@ Auth::routes();
 | SISWA AUTH
 |--------------------------------------------------------------------------
 */
-Route::get('/siswa/login', [SiswaLoginController::class, 'showLoginForm'])
-    ->name('siswa.login');
+Route::middleware('guest')->group(function () {
+    Route::get('/siswa/login', [SiswaLoginController::class, 'showLoginForm'])->name('siswa.login');
+    Route::post('/siswa/login', [SiswaLoginController::class, 'login'])->name('siswa.login.post');
+});
 
-Route::post('/siswa/login', [SiswaLoginController::class, 'login'])
-    ->name('siswa.login.post');
-
-Route::post('/siswa/logout', [SiswaLoginController::class, 'logout'])
-    ->name('siswa.logout');
-
+Route::post('/siswa/logout', [SiswaLoginController::class, 'logout'])->name('siswa.logout');
 /*
 |--------------------------------------------------------------------------
 | SISWA DASHBOARD
@@ -84,10 +81,14 @@ Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->group(function () {
 | DASHBOARD (AUTH)
 |--------------------------------------------------------------------------
 */
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
-    Route::get('/petugas', [AdminController::class, 'index'])->name('petugas.dashboard');
+
+    // Tambahkan middleware role di sini agar Siswa ditolak masuk ke Admin/Petugas
+    Route::middleware('role:admin,petugas')->group(function() {
+        Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
+        Route::get('/petugas', [AdminController::class, 'index'])->name('petugas.dashboard');
+    });
 });
 
 /*

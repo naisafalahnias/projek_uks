@@ -17,11 +17,15 @@
         </li>
 
         <li class="menu-item mt-4">
-            <a href="{{ route('logout') }}" class="menu-link text-danger" 
-               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <a href="{{ route('siswa.logout') }}" class="menu-link text-danger" 
+            onclick="event.preventDefault(); document.getElementById('siswa-logout-form').submit();">
                 <i class="menu-icon tf-icons bx bx-power-off"></i>
                 <div>Keluar</div>
             </a>
         </li>
+
+        <form id="siswa-logout-form" action="{{ route('siswa.logout') }}" method="POST" style="display: none;">
+            @csrf
+        </form>
     </ul>
 </aside>

@@ -16,19 +16,21 @@
                       <a class="dropdown-item" href="{{ route('backend.siswa.edit', $siswa->id) }}">
                         <i class="bx bx-edit-alt me-2"></i> Edit
                       </a>
-                      <form action="{{ route('backend.siswa.destroy', $siswa->id) }}" method="POST" onsubmit="return confirm('Yakin mau hapus?')">
+                      <form action="{{ route('backend.siswa.destroy', $siswa->id) }}" method="POST">
                         @csrf
                         @method('DELETE')
-                        <button class="dropdown-item" type="submit">
-                          <i class="bx bx-trash me-2"></i> Hapus
+                        <button type="button" class="dropdown-item btn-delete" data-name="{{ $siswa->nama }}">
+                            <i class="bx bx-trash me-2"></i> Hapus
                         </button>
-                      </form>
+                    </form>
                     </div>
                   </div>
                 </td>
               </tr>
 @empty
     <tr>
-        <td colspan="5" class="text-center">Tidak ada data ditemukan.</td>
-    </tr>
+        <td colspan="{{ auth()->user()->role === 'admin' ? 6 : 5 }}" class="text-center text-muted">
+            Tidak ada data ditemukan.
+        </td>
+    </tr>
 @endforelse

@@ -8,7 +8,7 @@ use Carbon\Carbon;
 class Siswa extends Model
 {
     // Hapus 'user_id' dari sini karena kita pakainya 'siswa_id' di tabel users
-    public $fillable = ['nama','tanggal_lahir', 'kelas_id', 'jenis_kelamin'];
+    public $fillable = ['nama','tanggal_lahir', 'kelas_id', 'jenis_kelamin','user_id'];
 
     public function kelas()
     {

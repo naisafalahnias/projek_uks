@@ -37,7 +37,7 @@
         </li>
         @if (auth()->user()->role === 'admin')
           <li class="menu-item {{ request()->routeIs('backend.user.index') ? 'active' : '' }}">
-            <a href="{{ route('backend.user.index') }}" class="menu-link"><div>Data User</div></a>
+            <a href="{{ route('backend.user.index') }}" class="menu-link"><div>Akun Petugas</div></a>
           </li>
         @endif
         @if(in_array(auth()->user()->role, ['admin', 'petugas']))
