@@ -10,6 +10,7 @@ if (! function_exists('logAktivitas')) {
                 'user_id' => auth()->id(),
                 'aksi'    => $aksi,
                 'tabel'   => $tabel,
+                'ip'      => request()->ip(),
             ]);
         }
     }

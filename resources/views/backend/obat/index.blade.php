@@ -77,10 +77,12 @@
                                         <i class="bx bx-edit-alt me-1 text-warning"></i> Edit
                                     </a>
                                     <div class="dropdown-divider"></div>
-                                    <form action="{{ route('backend.obat.destroy', $data->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data obat ini?')">
+                                    <form action="{{ route('backend.obat.destroy', $data->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="dropdown-item text-danger" type="submit">
+                                        <button class="dropdown-item text-danger btn-delete" 
+                                                type="submit" 
+                                                data-name="{{ $data->nama_obat }}">
                                             <i class="bx bx-trash me-1"></i> Hapus
                                         </button>
                                     </form>

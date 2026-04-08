@@ -13,33 +13,6 @@
         }
 
         /* Kop Surat Style */
-        .kop-surat {
-            width: 100%;
-            margin-bottom: 20px;
-            padding-bottom: 5px;
-            border-bottom: 3px double #000;
-            display: block;
-            clear: both; /* Memastikan tidak ada float yang nyangkut */
-        }
-
-        .logo-wadah {
-            float: left;
-            width: 70px; /* Ukuran tetap agar presisi */
-            margin-right: -70px; /* Teknik penyeimbang float */
-        }
-
-        .judul-wadah {
-            width: 100%;
-            text-align: center;
-        }
-
-        /* Tambahkan ini untuk memaksa konten selesai sebelum garis digambar */
-        .clearfix::after {
-            content: "";
-            clear: both;
-            display: table;
-        }
-        /* Kop Surat menggunakan Table agar lebih stabil */
         .table-kop {
             width: 100%;
             border: none;
@@ -47,7 +20,7 @@
         }
 
         .table-kop td {
-            border: none !important; /* Menghilangkan border tabel kop */
+            border: none !important;
             padding: 0px;
             vertical-align: middle;
         }
@@ -59,29 +32,32 @@
         }
 
         .nama-instansi {
-            font-size: 18px; /* Lebih besar */
+            font-size: 16px;
             font-weight: bold;
             margin: 0;
             text-transform: uppercase;
+            line-height: 1.2;
         }
 
         .sub-instansi {
-            font-size: 16px; /* Lebih besar */
+            font-size: 14px;
             font-weight: bold;
-            margin: 0;
+            margin: 2px 0;
+            text-transform: uppercase;
         }
 
         .alamat-instansi {
             font-size: 10px;
             font-style: italic;
             margin-top: 5px;
+            font-weight: normal;
         }
 
         h3 {
             text-align: center;
             text-transform: uppercase;
-            font-size: 14px;
-            margin: 20px 0 5px 0;
+            font-size: 13px;
+            margin: 10px 0 5px 0;
             text-decoration: underline;
         }
 
@@ -91,24 +67,25 @@
             font-size: 11px;
         }
 
-        table {
+        /* Table Data Style */
+        table.data-table {
             border-collapse: collapse;
             width: 100%;
         }
 
-        table th {
-            background-color: #f8f9fa;
+        table.data-table th {
+            background-color: #f2f2f2;
             color: #000;
             padding: 10px 5px;
-            border: 1px solid #333;
+            border: 1px solid #000;
             text-transform: uppercase;
             font-size: 10px;
         }
 
-        table td {
+        table.data-table td {
             padding: 8px 7px;
-            border: 1px solid #333;
-            vertical-align: middle;
+            border: 1px solid #000;
+            vertical-align: top;
         }
 
         .text-center { text-align: center; }
@@ -116,15 +93,15 @@
 
         /* Tanda Tangan */
         .ttd-container {
-            margin-top: 40px;
+            margin-top: 30px;
             width: 100%;
         }
         .ttd-box {
             float: right;
-            width: 220px;
+            width: 250px;
             text-align: center;
         }
-        .spasi-ttd { height: 70px; }
+        .spasi-ttd { height: 60px; }
     </style>
 </head>
 <body>
@@ -137,41 +114,34 @@
                     $logo = file_exists($path) ? base64_encode(file_get_contents($path)) : '';
                 @endphp
                 @if($logo)
-                    {{-- Ukuran dinaikkan ke 85 atau 90 agar terlihat lebih besar --}}
-                    <img src="data:image/png;base64,{{ $logo }}" width="90">
+                    <img src="data:image/png;base64,{{ $logo }}" width="80">
                 @endif
             </td>
-            <td width="85%" align="center">
-                <div class="nama-instansi">PEMERINTAH KOTA ADMINISTRASI</div> 
-                <div class="sub-instansi">UNIT KESEHATAN SEKOLAH (UKS) SMK NEGERI 1</div> 
+            <td width="85%" align="center" style="padding-right: 10%;">
+                <div class="nama-instansi">PEMERINTAH KOTA BANDUNG</div> 
+                <div class="sub-instansi">UNIT KESEHATAN SEKOLAH (UKS) SMK ASSALAAM BANDUNG</div> 
                 <div class="alamat-instansi">
-                    Jl. Merdeka Belajar No. 45, Kec. Cerdas, Kota Pintar.  <br>
-                    Kode Pos: 12345 [cite: 14]
+                    Jl. Situ Tarate, Cibaduyut, Dayeuhkolot, Kota Bandung, Jawa Barat 40265.<br>
+                    No Telp : (022) 5420220
                 </div>
             </td>
         </tr>
     </table>
 
-{{-- Garis pemisah diletakkan di luar tabel agar tidak memotong logo --}}
-<div class="line-header"></div>
-
-<h3>LAPORAN JADWAL PEMERIKSAAN KESEHATAN</h3> [cite: 15]
-<div class="periode">
-    Periode Laporan: <strong>{{ $awal }}</strong> s/d <strong>{{ $akhir }}</strong> [cite: 16]
-</div>
+    <div class="line-header"></div>
 
     <h3>LAPORAN JADWAL PEMERIKSAAN KESEHATAN</h3>
     <div class="periode">
         Periode Laporan: <strong>{{ \Carbon\Carbon::parse($awal)->format('d/m/Y') }}</strong> s/d <strong>{{ \Carbon\Carbon::parse($akhir)->format('d/m/Y') }}</strong>
     </div>
 
-    <table>
+    <table class="data-table">
         <thead>
             <tr>
                 <th width="5%">No</th>
-                <th width="18%">Hari / Tanggal</th>
+                <th width="20%">Hari / Tanggal</th>
                 <th width="15%">Kelas</th>
-                <th width="22%">Petugas Pelaksana</th>
+                <th width="20%">Petugas Pelaksana</th>
                 <th>Keterangan Tugas</th>
             </tr>
         </thead>
@@ -180,7 +150,7 @@
                 <tr>
                     <td class="text-center">{{ $loop->iteration }}</td>
                     <td class="text-center">
-                        {{ \Carbon\Carbon::parse($item->tanggal)->isoFormat('dddd, D MMM Y') }}
+                        {{ \Carbon\Carbon::parse($item->tanggal)->isoFormat('dddd, D MMMM Y') }}
                     </td>
                     <td class="text-center fw-bold">{{ $item->kelas->nama_kelas }}</td>
                     <td>{{ $item->user->name ?? '-' }}</td>
@@ -188,7 +158,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="text-center"><em>Tidak ada jadwal pemeriksaan pada periode ini.</em></td>
+                    <td colspan="5" class="text-center py-4"><em>Tidak ada jadwal pemeriksaan pada periode ini.</em></td>
                 </tr>
             @endforelse
         </tbody>
@@ -196,7 +166,7 @@
 
     <div class="ttd-container">
         <div class="ttd-box">
-            Dicetak pada: {{ now()->format('d/m/Y H:i') }}<br>
+            Kota Pintar, {{ now()->isoFormat('D MMMM Y') }}<br>
             Koordinator UKS,
             <div class="spasi-ttd"></div>
             <span class="fw-bold">( ............................................ )</span><br>

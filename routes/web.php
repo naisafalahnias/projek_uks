@@ -104,8 +104,9 @@ Route::middleware(['auth'])->prefix('backend')->name('backend.')->group(function
             'index', 'create', 'store', 'destroy'
         ]);
 
-        Route::get('log-aktivitas', [LogAktivitasController::class, 'index'])
-            ->name('log.index');
+        Route::get('log-aktivitas', [LogAktivitasController::class, 'index'])->name('log.index');
+        Route::delete('/log-aktivitas/{id}', [LogAktivitasController::class, 'destroy'])->name('log.destroy');
+        Route::delete('/log-aktivitas-delete-all', [LogAktivitasController::class, 'deleteAll'])->name('log.deleteAll');
         /*
         |------------------------------------------
         | AKUN SISWA (ADMIN ONLY)
@@ -153,9 +154,8 @@ Route::middleware(['auth'])->prefix('backend')->name('backend.')->group(function
             ->name('akun_siswa.index');
 
         // PETUGAS: KIRIM HASIL KE SISWA
-        Route::post('akun-siswa/{id}/kirim-hasil',
-            [UserController::class, 'kirimHasil']
-        )->name('user.kirimHasil');
+        Route::post('akun-siswa/{id}/kirim-hasil', [UserController::class, 'kirimHasil'])
+        ->name('user.kirimHasil');
 
         Route::get('siswa/search', [SiswaController::class, 'search'])->name('siswa.search');
         Route::resource('siswa', SiswaController::class)->except(['show']);

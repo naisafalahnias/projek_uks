@@ -41,7 +41,7 @@
                                         <option value="">-- Pilih Data Siswa --</option>
                                         @foreach($data_siswa as $siswa)
                                             <option value="{{ $siswa->id }}" {{ old('siswa_id') == $siswa->id ? 'selected' : '' }}>
-                                                {{ $siswa->nama }} (NISN: {{ $siswa->nisn ?? '-' }})
+                                                {{ $siswa->nama }}
                                             </option>
                                         @endforeach
                                     </select>

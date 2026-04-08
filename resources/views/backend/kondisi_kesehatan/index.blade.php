@@ -70,10 +70,12 @@
                                         <i class="bx bx-edit-alt me-1 text-warning"></i> Edit
                                     </a>
                                     {{-- Tambahkan aksi hapus jika diperlukan --}}
-                                    <form action="{{ route('backend.kondisi_kesehatan.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Hapus data kesehatan ini?')">
+                                    <form action="{{ route('backend.kondisi_kesehatan.destroy', $item->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="dropdown-item text-danger">
+                                        {{-- Hapus onsubmit, tambahkan class btn-delete dan data-name --}}
+                                        <button type="submit" class="dropdown-item text-danger btn-delete" 
+                                                data-name="Data Kondisi Kesehatan {{ $item->siswa->nama ?? 'ini' }}">
                                             <i class="bx bx-trash me-1"></i> Hapus
                                         </button>
                                     </form>

@@ -93,7 +93,9 @@
                             <a href="{{ route('backend.jadwal_pemeriksaan.index') }}" class="btn btn-outline-secondary">
                                 <i class="bx bx-arrow-back me-1"></i> Kembali
                             </a>
-                            <button type="submit" class="btn btn-warning px-4 shadow text-white">
+                            
+                            {{-- Tambahkan class btn-update dan ubah type jadi button --}}
+                            <button type="button" class="btn btn-warning px-4 shadow text-white btn-update">
                                 <i class="bx bx-refresh me-1"></i> Perbarui Jadwal
                             </button>
                         </div>

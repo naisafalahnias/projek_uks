@@ -88,11 +88,11 @@
                                     <a class="dropdown-item" href="{{ route('backend.makanans.edit', $item->id) }}">
                                         <i class="bx bx-edit-alt me-1 text-warning"></i> Edit
                                     </a>
-                                    <form action="{{ route('backend.makanans.destroy', $item->id) }}" method="POST" 
-                                          onsubmit="return confirm('Yakin ingin menghapus menu ini?')">
+                                    <form action="{{ route('backend.makanans.destroy', $item->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="dropdown-item text-danger">
+                                        <button type="submit" class="dropdown-item text-danger btn-delete" 
+                                                data-name="{{ $item->nama_makanan }}">
                                             <i class="bx bx-trash me-1"></i> Hapus
                                         </button>
                                     </form>

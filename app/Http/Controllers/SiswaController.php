@@ -28,21 +28,24 @@ class SiswaController extends Controller
     // 💾 Simpan data baru siswa
     public function store(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'nama' => 'required|string|max:255',
-            'tanggal_lahir' => 'nullable|date|before:today', // Rule ini yang bikin error tadi
+            'tanggal_lahir' => 'nullable|date|before:today',
             'kelas_id' => 'required|exists:kelas,id',
             'jenis_kelamin' => 'required|in:L,P',
         ], [
             'tanggal_lahir.required' => 'Kolom tanggal lahir wajib diisi.',
-            'tanggal_lahir.before' => 'Format tanggal lahir tidak valid. Tanggal harus sebelum hari ini.',
+            'tanggal_lahir.before' => 'Format tanggal lahir tidak valid.',
             'nama.required' => 'Nama lengkap siswa wajib diisi.',
             'kelas_id.required' => 'Silakan pilih kelas terlebih dahulu.',
-            'kelas_id.exists' => 'Data kelas yang dipilih tidak terdaftar di sistem.',
             'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih.',
         ]);
 
-        logAktivitas("Menambah Siswa {$siswa->nama}", 'siswa');
+        // Tambahkan ID user yang login sebagai penginput
+        $data['user_id'] = auth()->id();
+
+        // Cukup panggil ini. Log otomatis dibuat oleh SiswaObserver!
+        Siswa::create($data); 
 
         return redirect()->route('backend.siswa.index')
             ->with('success', 'Data siswa berhasil ditambahkan.');
@@ -65,19 +68,10 @@ class SiswaController extends Controller
             'jenis_kelamin' => 'required|in:L,P',
         ]);
 
-        // Cek apakah ada perubahan data (biar gak mubazir log-nya)
-        if ($request->nama == $siswa->nama && 
-            $request->kelas_id == $siswa->kelas_id && 
-            $request->jenis_kelamin == $siswa->jenis_kelamin &&
-            $request->tanggal_lahir == $siswa->tanggal_lahir) {
-            return redirect()->route('backend.siswa.index')->with('info', 'Tidak ada perubahan data.');
-        }
-
+        // Biarkan Observer yang menangani log jika ada perubahan (isDirty)
         $siswa->update($request->only([
             'nama', 'tanggal_lahir', 'kelas_id', 'jenis_kelamin'
         ]));
-
-        logAktivitas("Mengedit Siswa {$siswa->nama}", 'siswa');
 
         return redirect()->route('backend.siswa.index')
             ->with('success', 'Data siswa berhasil diupdate.');
@@ -86,14 +80,12 @@ class SiswaController extends Controller
     // 🗑️ Hapus siswa
     public function destroy(Siswa $siswa)
     {
-        // Hanya admin atau penginput asli yang boleh hapus
         if (auth()->user()->role !== 'admin' && $siswa->user_id !== auth()->id()) {
             return back()->with('error', 'Kamu tidak boleh menghapus data siswa inputan orang lain!');
         }
-        $namaSiswa = $siswa->nama;
-        $siswa->delete();
 
-        logAktivitas("Menghapus Siswa {$namaSiswa}", 'siswa');
+        // Observer otomatis mencatat log sebelum data benar-benar hilang
+        $siswa->delete();
 
         return redirect()->route('backend.siswa.index')->with('success', 'Data siswa berhasil dihapus.');
     }

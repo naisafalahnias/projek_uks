@@ -87,12 +87,10 @@
                                         <i class="bx bx-edit-alt me-1 text-warning"></i> Edit
                                     </a>
                                     <div class="dropdown-divider"></div>
-                                    <form action="{{ route('backend.konsumsi_makanan.destroy', $item->id) }}" 
-                                          method="POST" 
-                                          onsubmit="return confirm('Hapus catatan konsumsi ini?')">
+                                    <form action="{{ route('backend.konsumsi_makanan.destroy', $item->id) }}" method="POST" >
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="dropdown-item text-danger">
+                                        <button type="submit" class="dropdown-item text-danger btn-delete" data-name="Catatan Konsumsi {{ $item->siswa->nama ?? 'ini' }}">
                                             <i class="bx bx-trash me-1"></i> Hapus
                                         </button>
                                     </form>

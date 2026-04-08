@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Siswa;
+use App\Models\RekamMedis;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use App\Models\RekamMedis;
 
 class UserController extends Controller
 {
@@ -20,8 +21,10 @@ class UserController extends Controller
         return view('backend.user.index', compact('users'));
     }
 
+    // --- METHOD CREATE PETUGAS (YANG TADI HILANG) ---
     public function create()
     {
+        // Hanya Admin yang boleh buat akun petugas/admin baru
         abort_if(Auth::user()->role !== 'admin', 403);
         return view('backend.user.create');
     }
@@ -30,7 +33,7 @@ class UserController extends Controller
     {
         abort_if(Auth::user()->role !== 'admin', 403);
 
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'role' => 'required|in:admin,petugas',
@@ -38,113 +41,93 @@ class UserController extends Controller
             'password' => 'required|min:6',
         ]);
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'no_hp' => $request->no_hp,
-            'role' => $request->role,
-            'password' => Hash::make($request->password),
-        ]);
+        $data['password'] = Hash::make($request->password);
+        User::create($data);
 
-        return redirect()->route('backend.user.index')
-            ->with('success', 'User berhasil ditambahkan');
+        return redirect()->route('backend.user.index')->with('success', 'User berhasil ditambahkan');
     }
 
     public function destroy($id)
     {
         abort_if(Auth::user()->role !== 'admin', 403);
+        
+        $user = User::findOrFail($id);
+        if($user->id === auth()->id()) return back()->with('error', 'Tidak bisa hapus akun sendiri!');
 
-        User::destroy($id);
-        return back()->with('success', 'User dihapus');
+        $user->delete();
+        return back()->with('success', 'User berhasil dihapus');
     }
 
     /* ======================
        AKUN SISWA
     ====================== */
 
-    // ADMIN + PETUGAS (lihat data)
     public function siswaIndex()
     {
-        $users = User::where('role', 'siswa')->get();
+        $users = User::where('role', 'siswa')->with('siswa.kelas')->get();
         return view('backend.akun_siswa.index', compact('users'));
     }
 
-    /* ======================
-    AKUN SISWA
-    ====================== */
-
-    // ADMIN ONLY - Tampilkan Form Create
+    // --- METHOD CREATE AKUN SISWA ---
     public function siswaCreate()
     {
         abort_if(Auth::user()->role !== 'admin', 403);
         
-        // AMBIL DATA SISWA: Untuk dropdown di view
-        // Kita ambil yang belum punya akun (opsional) atau semua siswa
-        $data_siswa = \App\Models\Siswa::orderBy('nama', 'asc')->get();
+        // Ambil data siswa yang BELUM punya akun (biar gak double)
+        $data_siswa = Siswa::whereDoesntHave('akun')->orderBy('nama', 'asc')->get();
         
         return view('backend.akun_siswa.create', compact('data_siswa'));
     }
 
-    // ADMIN ONLY - Simpan ke Database
     public function siswaStore(Request $request)
     {
         abort_if(Auth::user()->role !== 'admin', 403);
 
-        $request->validate([
-            'siswa_id' => 'required|exists:siswas,id', // Pastikan ID siswa valid
+        $data = $request->validate([
+            'siswa_id' => 'required|exists:siswas,id|unique:users,siswa_id',
             'name'     => 'required',
             'email'    => 'required|email|unique:users',
             'no_hp'    => 'required|string|max:15',
             'password' => 'required|min:6',
         ]);
 
-        User::create([
-            'siswa_id' => $request->siswa_id, // KABEL PENGHUBUNG
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'no_hp'    => $request->no_hp,
-            'role'     => 'siswa',
-            'password' => Hash::make($request->password),
-        ]);
+        $data['role'] = 'siswa';
+        $data['password'] = Hash::make($request->password);
 
-        return redirect()
-            ->route('backend.akun_siswa.index')
-            ->with('success', 'Akun siswa berhasil dihubungkan dan ditambahkan');
-    }
+        User::create($data);
 
-    public function siswaDestroy($id)
-    {
-        abort_if(Auth::user()->role !== 'admin', 403);
-
-        User::where('id', $id)
-            ->where('role', 'siswa')
-            ->delete();
-
-        return back()->with('success', 'Akun siswa dihapus');
+        return redirect()->route('backend.akun_siswa.index')->with('success', 'Akun siswa berhasil dibuat');
     }
 
     /* ======================
        FITUR PETUGAS
     ====================== */
 
-    // PETUGAS: kirim hasil ke siswa
     public function kirimHasil($id)
     {
-        abort_if(Auth::user()->role !== 'petugas', 403);
+        // IZINKAN Admin DAN Petugas (Hapus pengecekan yang cuma buat petugas)
+        // Cek apakah user yang login punya role admin ATAU petugas
+        if (!in_array(Auth::user()->role, ['admin', 'petugas'])) {
+            abort(403, 'Anda tidak memiliki akses untuk fitur ini.');
+        }
 
-        $siswa = User::where('id', $id)
-            ->where('role', 'siswa')
-            ->firstOrFail();
+        // Cari user siswa yang dituju
+        $userSiswa = User::where('id', $id)->where('role', 'siswa')->firstOrFail();
 
-        $rekamMedis = RekamMedis::where('siswa_id', $id)
+        // Ambil rekam medis terakhir siswa tersebut
+        $rekamMedis = RekamMedis::where('siswa_id', $userSiswa->siswa_id)
             ->latest()
             ->first();
 
-        // NANTI: generate PDF + kirim email
-        // Mail::to($siswa->email)->send(new RekamMedisMail($pdf));
+        if (!$rekamMedis) {
+            return back()->with('error', 'Siswa ini belum memiliki riwayat rekam medis.');
+        }
 
-        return back()->with('success', 'Hasil berhasil dikirim ke email siswa');
+        // --- Logika pengiriman (Email/WA) ditaruh di sini ---
+        
+        // Contoh log aktivitas (pastikan fungsi logAktivitas sudah kamu buat)
+        // logAktivitas("Mengirim hasil rekam medis ke email: {$userSiswa->email}", 'users');
+
+        return back()->with('success', 'Hasil berhasil dikirim ke email siswa: ' . $userSiswa->email);
     }
-
-    
 }

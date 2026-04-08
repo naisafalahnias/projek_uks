@@ -16,7 +16,7 @@ class AdminController extends Controller
     public function index()
     {
         $jumlahSiswa      = Siswa::count();
-        $jumlahUser       = User::count();
+        $jumlahPetugas = User::where('role', 'petugas')->count();
         $jumlahObat       = Obat::count();
         $jumlahRekamMedis = RekamMedis::count();
 
@@ -41,7 +41,7 @@ class AdminController extends Controller
 
         return view('dashboard.admin', compact(
             'jumlahSiswa',
-            'jumlahUser',
+            'jumlahPetugas',
             'jumlahObat',
             'jumlahRekamMedis',
             'dataKunjungan',
@@ -50,6 +50,39 @@ class AdminController extends Controller
             'stokObatChart'
         ));
         
+    }
+
+    public function getStats()
+    {
+        $today = \Carbon\Carbon::today();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                // Hapus whereDate supaya jadi TOTAL SEMUA DATA
+                'total_rekam_medis' => RekamMedis::count(), 
+                
+                // Ini tetap hari ini (opsional, sesuaikan kebutuhan)
+                'pasien_hari_ini'   => RekamMedis::whereDate('tanggal', $today)->count(),
+                
+                'menunggu'          => RekamMedis::where('status', 'menunggu')->count(),
+                'dirujuk'           => RekamMedis::where('status', 'dirujuk')->count(),
+                'total_siswa'       => Siswa::count(),
+                'total_obat'        => Obat::count(),
+            ]
+        ]);
+    }
+
+    // Laravel Controller
+    public function getRekamMedis() {
+        // 1. Ambil rekam medis BESERTA data siswanya
+        $data = RekamMedis::with('siswa')->get(); 
+
+        // 2. Kirim sebagai JSON
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
     }
 
 }

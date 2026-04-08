@@ -24,7 +24,7 @@
                             type="text" 
                             id="search-input" 
                             class="form-control" 
-                            placeholder="Cari berdasarkan Nama, NISN, atau Kelas..."
+                            placeholder="Cari berdasarkan Nama, atau Kelas..."
                         >
                     </div>
                 </div>

@@ -73,21 +73,18 @@
                             </td>
                             <td class="text-center">
                                 @if ($user->role !== 'admin')
-                                    <div class="dropdown">
-                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                    {{-- Form Hapus Langsung Tanpa Dropdown --}}
+                                    <form action="{{ route('backend.user.destroy', $user->id) }}" method="POST" class="form-delete">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" class="btn btn-icon btn-outline-danger btn-sm btn-delete-petugas" 
+                                                data-name="{{ $user->name }}" 
+                                                title="Hapus User">
+                                            <i class="bx bx-trash"></i>
                                         </button>
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <form action="{{ route('backend.user.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Yakin hapus user ini?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="dropdown-item text-danger">
-                                                    <i class="bx bx-trash me-1"></i> Hapus User
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
+                                    </form>
                                 @else
+                                    {{-- Ikon gembok untuk Admin Utama --}}
                                     <span class="badge badge-center rounded-pill bg-label-secondary" title="Admin Utama tidak bisa dihapus">
                                         <i class="bx bx-lock-alt"></i>
                                     </span>
@@ -105,3 +102,34 @@
     </div>
 </div>
 @endsection
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Kita pakai class 'btn-delete-petugas' biar spesifik
+    $(document).on('click', '.btn-delete-petugas', function(e) {
+        e.preventDefault();
+        
+        let name = $(this).data('name');
+        let form = $(this).closest('.form-delete');
+
+        Swal.fire({
+            title: 'Yakin Hapus?',
+            text: "Akun " + name + " akan dihapus permanen!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ff3e1d',
+            cancelButtonColor: '#8592a3',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal',
+            customClass: {
+                confirmButton: 'btn btn-danger me-3',
+                cancelButton: 'btn btn-label-secondary'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit(); // Ini yang bakal jalanin fungsi destroy di controller
+            }
+        });
+    });
+});
+</script>

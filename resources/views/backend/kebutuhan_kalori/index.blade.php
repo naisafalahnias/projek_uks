@@ -89,12 +89,10 @@
                                         <a class="dropdown-item" href="{{ route('backend.kebutuhan_kalori.edit', $item->id) }}">
                                             <i class="bx bx-edit-alt me-1 text-warning"></i> Edit
                                         </a>
-                                        <form action="{{ route('backend.kebutuhan_kalori.destroy', $item->id) }}" 
-                                              method="POST" 
-                                              onsubmit="return confirm('Hapus data kebutuhan kalori ini?')">
+                                        <form action="{{ route('backend.kebutuhan_kalori.destroy', $item->id) }}" method="POST">                                            
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="dropdown-item text-danger">
+                                            <button type="submit" class="dropdown-item text-danger btn-delete" data-name="Hitungan Kalori {{ $item->siswa->nama ?? 'ini' }}">
                                                 <i class="bx bx-trash me-1"></i> Hapus
                                             </button>
                                         </form>

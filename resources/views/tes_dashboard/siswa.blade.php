@@ -40,26 +40,55 @@
             
             {{-- TAB 1: RINGKASAN --}}
             <div class="tab-pane fade show active" id="navs-ringkasan" role="tabpanel">
+                {{-- Alert Kondisi Khusus --}}
+                @if($kondisiKesehatan)
+                <div class="alert alert-danger d-flex align-items-center mb-4 shadow-sm" role="alert">
+                    <span class="badge badge-center rounded-pill bg-danger me-3"><i class="bx bx-error fs-4"></i></span>
+                    <div>
+                        {{-- Ganti 'kondisi' menjadi 'nama_kondisi' --}}
+                        <h6 class="mb-0 text-danger fw-bold">Peringatan Medis: {{ strtoupper($kondisiKesehatan->nama_kondisi) }}</h6>
+                        
+                        <small class="text-dark">
+                            @if($kondisiKesehatan->keterangan && $kondisiKesehatan->keterangan != '-')
+                                <strong>Instruksi:</strong> {{ $kondisiKesehatan->keterangan }}
+                            @else
+                                Harap segera melapor ke petugas UKS jika merasa gejala terkait kondisi ini muncul.
+                            @endif
+                        </small>
+                    </div>
+                </div>
+                @endif
+
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <h6>Status Gizi Terakhir</h6>
                         <div class="p-3 border rounded bg-light">
                             @if($giziTerakhir)
-                                <h4 class="fw-bold text-success mb-1">Normal (Ideal)</h4>
-                                <small class="text-muted">TB: {{ $giziTerakhir->tinggi_badan }}cm | BB: {{ $giziTerakhir->berat_badan }}kg</small>
+                                {{-- Badge Status IMT --}}
+                                @php
+                                    $imt = $giziTerakhir->imt > 0 ? $giziTerakhir->imt : ($giziTerakhir->berat_badan / pow($giziTerakhir->tinggi_badan/100, 2));
+                                    $status_label = $imt < 18.5 ? 'Kurus' : ($imt <= 25 ? 'Normal (Ideal)' : 'Kelebihan Berat Badan');
+                                    $status_color = $imt < 18.5 ? 'warning' : ($imt <= 25 ? 'success' : 'danger');
+                                @endphp
+                                <h4 class="fw-bold text-{{ $status_color }} mb-1">{{ $status_label }}</h4>
+                                <small class="text-muted">TB: {{ $giziTerakhir->tinggi_badan }}cm | BB: {{ $giziTerakhir->berat_badan }}kg | IMT: {{ number_format($imt, 1) }}</small>
                             @else
                                 <p class="mb-0 text-muted">Belum ada data gizi.</p>
                             @endif
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <h6>Info Kesehatan</h6>
+                        <h6>Info Personal</h6>
                         <ul class="list-group list-group-flush small">
                             <li class="list-group-item d-flex justify-content-between px-0">
-                                <span>Jenis Kelamin</span><span class="fw-bold">{{ $siswa->jenis_kelamin }}</span>
+                                <span>Jenis Kelamin</span><span class="fw-bold">{{ $siswa->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</span>
                             </li>
-                            <li class="list-group-item d-flex justify-content-between px-0 border-bottom-0">
+                            <li class="list-group-item d-flex justify-content-between px-0">
                                 <span>Usia</span><span class="fw-bold">{{ $siswa->usia }} Tahun</span>
+                            </li>
+                            {{-- Tambah info wali/orang tua kalau ada --}}
+                            <li class="list-group-item d-flex justify-content-between px-0 border-bottom-0 text-primary">
+                                <span>Status Akun</span><span class="badge bg-label-primary">Aktif</span>
                             </li>
                         </ul>
                     </div>

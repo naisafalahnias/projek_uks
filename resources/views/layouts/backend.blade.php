@@ -134,20 +134,27 @@
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     @stack('scripts')
-    @stack('scripts')
-    
     <script>
     // 1. Notifikasi Sukses
     @if (session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil',
-            text: '{{ session('success') }}',
-            timer: 2500,
-            showConfirmButton: false
-        });
-    @endif
+    // Cek apakah pesan mengandung kata 'kirim' biar icon-nya beda
+    let successMessage = "{{ session('success') }}";
+    let iconType = successMessage.toLowerCase().includes('kirim') ? 'success' : 'success';
+    let titleText = successMessage.toLowerCase().includes('kirim') ? 'Terkirim!' : 'Berhasil';
+
+    Swal.fire({
+        icon: 'success',
+        title: titleText,
+        text: successMessage,
+        timer: 3000,
+        showConfirmButton: false,
+        showClass: {
+            popup: 'animate__animated animate__fadeInUp' // Biar ada efek muncul dari bawah
+        }
+    });
+@endif
 
     // 2. Notifikasi Error Session
     @if (session('error'))
@@ -175,29 +182,30 @@
     @endif
 
     // 4. Fitur Delete Global
-    $(document).on('click', '.btn-delete', function(e) {
+    $(document).on('click', '.btn-delete, .btn-confirm-delete', function(e) {
         e.preventDefault();
+        
+        // Ambil form terdekat dari tombol yang diklik
         let form = $(this).closest('form');
+        // Ambil nama dari data-name tombol
         let name = $(this).data('name') || "data ini";
 
         Swal.fire({
             title: "Yakin mau hapus?",
-            text: "Kamu akan menghapus " + name + ". Data yang dihapus tidak bisa dikembalikan!",
+            text: "Kamu akan menghapus " + name + ". Data tidak bisa dikembalikan!",
             icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#3085d6",
+            confirmButtonColor: "#ff3e1d", // Warna merah Sneat
+            cancelButtonColor: "#8592a3",
             confirmButtonText: "Ya, Hapus!",
-            cancelButtonText: "Batal"
+            cancelButtonText: "Batal",
+            customClass: {
+                confirmButton: 'btn btn-danger me-3',
+                cancelButton: 'btn btn-label-secondary'
+            },
+            buttonsStyling: false
         }).then((result) => {
             if (result.isConfirmed) {
-                Swal.fire({
-                    title: 'Mohon Tunggu...',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
                 form.submit();
             }
         });

@@ -672,7 +672,7 @@
           <i class="bi bi-geo-alt"></i>
           <div>
             <h3>Alamat Sekolah</h3>
-            <p>Medischool, Indonesia</p>
+            <p>SMK ASSALAAM BANDUNG</p>
           </div>
         </div>
 
@@ -680,7 +680,7 @@
           <i class="bi bi-telephone"></i>
           <div>
             <h3>Telepon</h3>
-            <p>021-xxxxxxx</p>
+            <p>+62 858-6458-3594</p>
           </div>
         </div>
 
@@ -688,7 +688,7 @@
           <i class="bi bi-envelope"></i>
           <div>
             <h3>Email</h3>
-            <p>uks@medischool.sch.id</p>
+            <p>medischool@gmail.com</p>
           </div>
         </div>
       </div>

@@ -64,7 +64,6 @@
                                 @if($user->siswa_id && $user->siswa)
                                     <div class="d-flex flex-column">
                                         <span class="text-primary fw-bold">{{ $user->siswa->nama }}</span>
-                                        <small class="text-muted">NISN: {{ $user->siswa->nisn ?? '-' }}</small>
                                     </div>
                                 @else
                                     <span class="badge bg-label-warning small">Belum Terhubung</span>
@@ -83,9 +82,9 @@
                                 <div class="d-flex justify-content-center gap-2">
                                     {{-- Fitur Kirim Hasil (Admin & Petugas) --}}
                                     @if(in_array(Auth::user()->role, ['admin', 'petugas']))
-                                        <form action="{{ route('backend.user.kirimHasil', $user->id) }}" method="POST">
+                                        <form action="{{ route('backend.user.kirimHasil', $user->id) }}" method="POST" class="form-kirim-hasil">
                                             @csrf
-                                            <button class="btn btn-sm btn-success px-3 shadow-sm">
+                                            <button type="button" class="btn btn-sm btn-success px-3 shadow-sm btn-kirim">
                                                 <i class="bx bx-paper-plane me-1"></i> Kirim Hasil
                                             </button>
                                         </form>
@@ -94,11 +93,15 @@
                                     {{-- Fitur Hapus (Hanya Admin) --}}
                                     @if(Auth::user()->role === 'admin')
                                         <form action="{{ route('backend.akun_siswa.destroy', $user->id) }}" 
-                                              method="POST" 
-                                              onsubmit="return confirm('Yakin hapus akun siswa ini?')">
+                                            method="POST" 
+                                            class="form-delete">
                                             @csrf
                                             @method('DELETE')
-                                            <button class="btn btn-sm btn-icon btn-outline-danger shadow-sm" title="Hapus Akun">
+                                            {{-- TAMBAHKAN class btn-delete-siswa dan data-name di sini --}}
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-icon btn-outline-danger shadow-sm btn-delete-siswa" 
+                                                    data-name="{{ $user->name }}" 
+                                                    title="Hapus Akun">
                                                 <i class="bx bx-trash"></i>
                                             </button>
                                         </form>
@@ -122,3 +125,66 @@
     </div>
 </div>
 @endsection
+{{-- Bungkus pakai push scripts agar ditaruh setelah library jQuery dipanggil --}}
+@push('scripts')
+<script>
+$(document).ready(function () {
+    // 1. Fitur Delete Siswa
+    $(document).on('click', '.btn-delete-siswa', function(e) {
+        e.preventDefault();
+        let name = $(this).data('name');
+        let form = $(this).closest('.form-delete');
+
+        Swal.fire({
+            title: 'Yakin Hapus?',
+            text: "Akun " + name + " akan dihapus permanen!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Hapus!',
+            customClass: {
+                confirmButton: 'btn btn-danger me-3',
+                cancelButton: 'btn btn-label-secondary'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+
+    // 2. Fitur Kirim Hasil dengan Loading
+    $(document).on('click', '.btn-kirim', function(e) {
+        e.preventDefault();
+        let form = $(this).closest('.form-kirim-hasil'); // Gunakan class form yang spesifik
+
+        Swal.fire({
+            title: 'Kirim ke Siswa?',
+            text: "Hasil rekam medis terbaru akan dikirim melalui email.",
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#71dd37',
+            confirmButtonText: 'Ya, Kirim Sekarang!',
+            cancelButtonText: 'Batal',
+            customClass: {
+                confirmButton: 'btn btn-success me-3',
+                cancelButton: 'btn btn-label-secondary'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Sedang Mengirim...',
+                    text: 'Mohon tunggu sebentar.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                form.submit();
+            }
+        });
+    });
+});
+</script>
+@endpush

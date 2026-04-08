@@ -5,7 +5,12 @@
                 <td>{{ $siswa->kelas->nama_kelas }}</td>
                 <td>{{ $siswa->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
                 @if(auth()->user()->role === 'admin')
-                  <td>{{ $siswa->user->name ?? '-' }}</td> 
+                  <td>
+                    {{-- Ini akan memanggil nama dari tabel USERS berdasarkan user_id --}}
+                    <span class="badge bg-label-secondary">
+                        {{ $siswa->user->name ?? 'Tidak Diketahui' }}
+                    </span>
+                  </td> 
                 @endif
                 <td>
                   <div class="dropdown">

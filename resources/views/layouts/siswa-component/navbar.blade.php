@@ -1,75 +1,70 @@
 <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
-            <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
-              <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
-                <i class="bx bx-menu bx-sm"></i>
-              </a>
-            </div>
+    <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+        <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+            <i class="bx bx-menu bx-sm"></i>
+        </a>
+    </div>
 
-            <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+    <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+        <ul class="navbar-nav flex-row align-items-center ms-auto">
+            
+            @php
+                $user = Auth::user();
+                // Default PP Petugas
+                $pp = 'assets/backend/img/avatars/petugas1.jpeg'; 
 
-              <ul class="navbar-nav flex-row align-items-center ms-auto">
-                <!-- Place this tag where you want the button to render. -->
-                
+                if ($user->role === 'admin') {
+                    $pp = 'assets/backend/img/avatars/admin1.jpeg';
+                } elseif ($user->role === 'siswa') {
+                    // SEMUA SISWA SERAGAM PAKAI INI, BIAR BERES!
+                    $pp = 'assets/backend/img/avatars/siswa.jpg'; 
+                }
+            @endphp
 
-                <!-- User -->
-                <li class="nav-item navbar-dropdown dropdown-user dropdown">
-                  <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+            <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
-                      <img src="{{ asset(
-                          Auth::user()->role === 'admin' 
-                              ? 'assets/backend/img/avatars/admin1.jpeg' 
-                              : (Auth::user()->role === 'siswa' 
-                                  ? (Auth::user()->siswa->jenis_kelamin === 'Perempuan' 
-                                      ? 'assets/backend/img/avatars/male.jpeg' 
-                                      : 'assets/backend/img/avatars/female.jpeg')
-                                  : 'assets/backend/img/avatars/petugas1.jpeg')
-                      ) }}" alt class="w-px-40 h-auto rounded-circle" />                    
+                        <img src="{{ asset($pp) }}" alt class="w-px-40 h-auto rounded-circle" />
                     </div>
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-end">
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
                     <li>
-                      <a class="dropdown-item" href="#">
-                        <div class="d-flex">
-                          <div class="flex-shrink-0 me-3">
-                            <div class="avatar avatar-online">
-                              <img src="{{ asset(Auth::user()->role === 'admin' ? 'assets/backend/img/avatars/admin1.jpeg' : 'assets/backend/img/avatars/petugas.jpeg') }}" alt class="w-px-40 h-auto rounded-circle" />
+                        <a class="dropdown-item" href="#">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0 me-3">
+                                    <div class="avatar avatar-online">
+                                        <img src="{{ asset($pp) }}" alt class="w-px-40 h-auto rounded-circle" />
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    @auth
+                                        <span class="fw-semibold d-block">{{ Auth::user()->name }}</span>
+                                        <small class="text-muted">{{ ucfirst(Auth::user()->role) }}</small>
+                                    @endauth
+                                </div>
                             </div>
-                          </div>
-                          <div class="flex-grow-1">
-                            @auth
-                              <span class="fw-semibold d-block">{{ Auth::user()->name }}</span>
-                              <small class="text-muted">{{ Auth::user()->role }}</small>
-                            @else
-                              <span class="fw-semibold d-block">Tamu</span>
-                              <small class="text-muted">Guest</small>
-                            @endauth
-
-                          </div>
-                        </div>
-                      </a>
+                        </a>
                     </li>
                     <li>
-                      <a class="dropdown-item" href="{{ url('/') }}">
-                        <i class="bx bx-home-circle me-2"></i>
-                        <span class="align-middle">Kembali</span>
-                      </a>
+                        <a class="dropdown-item" href="{{ url('/') }}">
+                            <i class="bx bx-home-circle me-2"></i>
+                            <span class="align-middle">Kembali</span>
+                        </a>
                     </li>
                     <li>
-                      <div class="dropdown-divider"></div>
+                        <div class="dropdown-divider"></div>
                     </li>
                     <li>
-                      <form action="{{ route('siswa.logout') }}" method="POST" class="d-inline">
-                        @csrf
-                        <button type="submit" class="dropdown-item">
-                          <i class="bx bx-power-off me-2"></i>
-                          <span class="align-middle">Log Out</span>
-                        </button>
-                      </form>
-
+                        <form action="{{ route('siswa.logout') }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="dropdown-item">
+                                <i class="bx bx-power-off me-2"></i>
+                                <span class="align-middle">Log Out</span>
+                            </button>
+                        </form>
                     </li>
-                  </ul>
-                </li>
-                <!--/ User -->
-              </ul>
-            </div>
-          </nav>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>

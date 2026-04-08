@@ -12,19 +12,19 @@ class ObatController extends Controller
     public function index()
     {
         $obat = Obat::all()->map(function ($item) {
-        $today = Carbon::today();
-        $kadaluarsa = Carbon::parse($item->tgl_kadaluarsa);
+            $today = Carbon::today();
+            $kadaluarsa = Carbon::parse($item->tgl_kadaluarsa);
 
-        if ($kadaluarsa->isPast()) {
-            $item->status_kadaluarsa = 'expired';
-        } elseif ($kadaluarsa->greaterThanOrEqualTo($today) && $kadaluarsa->diffInDays($today) <= 30) {
-            $item->status_kadaluarsa = 'near_expired';
-        } else {
-            $item->status_kadaluarsa = 'safe';
-        }
+            if ($kadaluarsa->isPast()) {
+                $item->status_kadaluarsa = 'expired';
+            } elseif ($kadaluarsa->diffInDays($today) <= 30) {
+                $item->status_kadaluarsa = 'near_expired';
+            } else {
+                $item->status_kadaluarsa = 'safe';
+            }
+            return $item;
+        });
 
-        return $item;
-    });
         return view('backend.obat.index', compact('obat'));
     }
 
@@ -35,26 +35,17 @@ class ObatController extends Controller
 
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'nama_obat' => 'required',
-            'kategori' => 'required',
-            'stok' => 'required|numeric',
+        $data = $request->validate([
+            'nama_obat'      => 'required',
+            'kategori'       => 'required',
+            'stok'           => 'required|numeric',
             'tgl_kadaluarsa' => 'required|date',
-            'unit' => 'required',
-            'deskripsi' => 'nullable',
+            'unit'           => 'required',
+            'deskripsi'      => 'nullable',
         ]);
 
-        $obat                       =   new Obat;
-        $obat->nama_obat            = $request->nama_obat;
-        $obat->kategori             = $request->kategori;
-        $obat->stok                 = $request->stok;
-        $obat->tgl_kadaluarsa       = $request->tgl_kadaluarsa;
-        $obat->unit                 = $request->unit;
-        $obat->deskripsi            = $request->deskripsi;
-
-        $obat->save();
-
-        logAktivitas("Menambah Obat {$obat->nama_obat}", 'obat');
+        // Observer otomatis mencatat: "Menambah Obat [Nama]"
+        Obat::create($data);
 
         return redirect()->route('backend.obat.index')->with('success', 'Obat berhasil ditambahkan');
     }
@@ -73,26 +64,19 @@ class ObatController extends Controller
 
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'nama_obat' => 'required',
-            'kategori' => 'required',
-            'stok' => 'required|numeric',
+        $data = $request->validate([
+            'nama_obat'      => 'required',
+            'kategori'       => 'required',
+            'stok'           => 'required|numeric',
             'tgl_kadaluarsa' => 'required|date',
-            'unit' => 'required',
-            'deskripsi' => 'nullable',
+            'unit'           => 'required',
+            'deskripsi'      => 'nullable',
         ]);
 
-        $obat                       = Obat::findOrFail($id);
-        $obat->nama_obat            = $request->nama_obat;
-        $obat->kategori             = $request->kategori;
-        $obat->stok                 = $request->stok;
-        $obat->tgl_kadaluarsa       = $request->tgl_kadaluarsa;
-        $obat->unit                 = $request->unit;
-        $obat->deskripsi            = $request->deskripsi;
-
-        $obat->save();
-
-        logAktivitas("Mengedit Obat {$obat->nama_obat}", 'obat');
+        $obat = Obat::findOrFail($id);
+        
+        // Observer otomatis mencatat perubahan (termasuk jika stok berubah)
+        $obat->update($data);
 
         return redirect()->route('backend.obat.index')->with('success', 'Obat berhasil diperbarui');
     }
@@ -100,9 +84,9 @@ class ObatController extends Controller
     public function destroy($id)
     {
         $obat = Obat::findOrFail($id);
+        
+        // Observer otomatis mencatat sebelum data dihapus
         $obat->delete();
-
-        logAktivitas("Menghapus  Obat {$obat->nama}", 'obat');
 
         return redirect()->route('backend.obat.index')->with('success', 'Data Berhasil Dihapus');
     }

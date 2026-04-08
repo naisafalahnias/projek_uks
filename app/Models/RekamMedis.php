@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 class RekamMedis extends Model
 {
     protected $fillable = ['siswa_id', 'tanggal', 'keluhan', 'tindakan', 'user_id', 'status'];
+    protected $table = 'rekam_medis';
 
     public function siswa()
     {
-        return $this->belongsTo(Siswa::class);
+        return $this->belongsTo(Siswa::class, 'siswa_id');
     }
 
     public function user()

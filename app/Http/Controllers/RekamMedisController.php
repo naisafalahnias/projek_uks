@@ -190,6 +190,18 @@ class RekamMedisController extends Controller
 
     public function exportExcel(Request $request)
     {
+        // Catat log dulu sebelum file didownload
+        logAktivitas("Mencetak Laporan Rekam Medis (Excel)", 'REKAM_MEDIS');
+
         return Excel::download(new RekamMedisExport($request->tanggal_awal, $request->tanggal_akhir), 'laporan-rekam-medis.xlsx');
     }
+
+    public function exportPdf(Request $request) 
+    {
+        // Kalau export PDF kamu juga lewat class Export yang sama tapi beda format
+        logAktivitas("Mencetak Laporan Rekam Medis (PDF)", 'REKAM_MEDIS');
+
+        return Excel::download(new RekamMedisExport($request->tanggal_awal, $request->tanggal_akhir), 'laporan-rekam-medis.pdf', \Maatwebsite\Excel\Excel::DOMPDF);
+    }
+
 }

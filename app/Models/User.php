@@ -64,4 +64,10 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Siswa::class, 'siswa_id');
     }
+
+    public function data_inputan_siswa()
+    {
+        // User (Admin/Petugas) punya banyak data siswa yang diinput
+        return $this->hasMany(Siswa::class, 'user_id');
+    }
 }

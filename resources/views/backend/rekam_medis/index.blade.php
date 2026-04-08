@@ -109,11 +109,13 @@
                                             <i class="bx bx-edit-alt me-1 text-warning"></i> Edit
                                         </a>
                                         <div class="dropdown-divider"></div>
-                                        <form action="{{ route('backend.rekam_medis.destroy', $data->id) }}" method="POST"
-                                            onsubmit="return confirm('Yakin ingin menghapus data rekam medis ini?')">
+                                        <form action="{{ route('backend.rekam_medis.destroy', $data->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button class="dropdown-item text-danger" type="submit">
+                                            {{-- Hapus onsubmit manual, tambahkan class btn-delete dan data-name --}}
+                                            <button class="dropdown-item text-danger btn-delete" 
+                                                    type="submit" 
+                                                    data-name="Rekam Medis {{ $data->siswa->nama ?? 'Siswa' }}">
                                                 <i class="bx bx-trash me-1"></i> Hapus
                                             </button>
                                         </form>

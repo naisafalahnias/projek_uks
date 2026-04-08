@@ -8,6 +8,7 @@ use App\Models\Siswa;
 use App\Models\RekamMedis;
 use App\Models\PemeriksaanGizi;
 use App\Models\JadwalPemeriksaan;
+use App\Models\KondisiKesehatan;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class SiswaDashboardController extends Controller
@@ -29,11 +30,11 @@ class SiswaDashboardController extends Controller
             return "Akun Anda belum dihubungkan ke data profil Siswa. Hubungi Admin.";
         }
         
-        // 1. Variabel Angka (Untuk Card "Total Pemeriksaan")
+        // Ambil data kondisi kesehatan khusus untuk alert
+        $kondisiKesehatan = KondisiKesehatan::where('siswa_id', $siswa->id)->first();
+
         $rekamMedisCount = RekamMedis::where('siswa_id', $siswa->id)->count(); 
         
-        // 2. Variabel Data (Untuk Tabel "Pemeriksaan Terbaru") 
-        // INI YANG TADI KURANG: Kita ambil datanya, bukan cuma hitung jumlahnya.
         $rekamMedis = RekamMedis::where('siswa_id', $siswa->id)
                         ->latest('tanggal')
                         ->take(5)
@@ -52,14 +53,15 @@ class SiswaDashboardController extends Controller
                             ->orderBy('tanggal', 'asc')
                             ->get();
 
-        // Pastikan 'rekamMedis' (datanya) masuk ke compact
+        // Pastikan 'kondisiKesehatan' dimasukkan ke compact
         return view('tes_dashboard.siswa', compact(
             'siswa',
             'rekamMedisCount', 
             'rekamMedis', 
             'giziTerakhir',
             'riwayatGizi',
-            'jadwalMendatang'
+            'jadwalMendatang',
+            'kondisiKesehatan' // <--- MASUKKAN KE SINI
         ));
     }
     

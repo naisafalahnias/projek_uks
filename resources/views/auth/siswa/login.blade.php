@@ -74,7 +74,7 @@
       <form action="{{ route('siswa.login.post') }}" method="POST">
         @csrf
         <div class="mb-3">
-          <label class="form-label small fw-bold">Email / NISN</label>
+          <label class="form-label small fw-bold">Email</label>
           <input type="email" class="form-control" name="email" placeholder="Masukkan email siswa" required autofocus>
         </div>
         

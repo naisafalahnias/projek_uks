@@ -81,24 +81,27 @@
                         </td>
 
                         {{-- Aksi --}}
-                        <td>
-                            <div class="dropdown">
-                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                    <i class="bx bx-dots-vertical-rounded"></i>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-end shadow">
-                                    <a class="dropdown-item" href="{{ route('backend.pemeriksaan_gizi.edit', $item->id) }}">
-                                        <i class="bx bx-edit-alt me-1 text-warning"></i> Edit
-                                    </a>
-                                    <form action="{{ route('backend.pemeriksaan_gizi.destroy', $item->id) }}" method="POST" 
-                                          onsubmit="return confirm('Hapus data gizi ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="dropdown-item text-danger">
-                                            <i class="bx bx-trash me-1"></i> Hapus
-                                        </button>
-                                    </form>
-                                </div>
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center gap-2">
+                                {{-- Tombol Edit --}}
+                                <a href="{{ route('backend.pemeriksaan_gizi.edit', $item->id) }}" 
+                                class="btn btn-sm btn-icon btn-outline-warning shadow-sm" 
+                                title="Edit Data">
+                                    <i class="bx bx-edit-alt"></i>
+                                </a>
+
+                                {{-- Form Hapus --}}
+                                <form action="{{ route('backend.pemeriksaan_gizi.destroy', $item->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    {{-- Class diubah: Hapus dropdown-item, ganti ke btn btn-sm btn-icon --}}
+                                    <button type="button" 
+                                            class="btn btn-sm btn-icon btn-outline-danger shadow-sm btn-confirm-delete" 
+                                            data-name="Data Gizi {{ $item->siswa->nama }}"
+                                            title="Hapus Data">
+                                        <i class="bx bx-trash"></i> 
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
@@ -116,3 +119,36 @@
     </div>
 </div>
 @endsection
+@push('scripts')
+<script>
+    // Ini cara paling ampuh buat dengerin klik di tombol dalam dropdown
+    document.addEventListener('click', function (event) {
+        if (event.target.closest('.btn-confirm-delete')) {
+            event.preventDefault();
+            
+            const button = event.target.closest('.btn-confirm-delete');
+            const form = button.closest('.form-delete-jadwal');
+            const namaKelas = button.getAttribute('data-kelas');
+
+            Swal.fire({
+                title: 'Yakin mau hapus?',
+                text: "Jadwal pemeriksaan untuk kelas " + namaKelas + " bakal ilang permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ff3e1d',
+                cancelButtonColor: '#8592a3',
+                confirmButtonText: 'Ya, Hapus Saja!',
+                cancelButtonText: 'Gak Jadi',
+                customClass: {
+                    confirmButton: 'btn btn-danger me-3',
+                    cancelButton: 'btn btn-label-secondary'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        }
+    });
+</script> 

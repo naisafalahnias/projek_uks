@@ -38,73 +38,86 @@
             <div class="container-xxl flex-grow-1 container-p-y">
               
               <div class="row">
-                <div class="col-lg-12 mb-4 order-0">
-                  <div class="card">
-                    <div class="d-flex align-items-end row">
-                      <div class="col-sm-7">
-                        <div class="card-body">
-                          <h5 class="card-title text-primary">Selamat Datang {{ auth()->user()->name }}! 🎉</h5>
-                          <p class="mb-4">
-                            {{ auth()->user()->role === 'admin' ? 'Sistem berjalan optimal. Anda memiliki kendali penuh atas data medis dan inventaris obat hari ini.' : 'Siap melayani siswa hari ini? Tetap teliti dalam pencatatan rekam medis ya!' }}
-                          </p>
-                          <a href="javascript:;" class="btn btn-sm btn-outline-primary">Lihat Laporan Terbaru</a>
-                        </div>
+                  {{-- Card Selamat Datang --}}
+                  <div class="col-lg-12 mb-4 order-0">
+                      <div class="card">
+                          <div class="d-flex align-items-end row">
+                              <div class="col-sm-7">
+                                  <div class="card-body">
+                                      <h5 class="card-title text-primary">Selamat Datang {{ auth()->user()->name }}! 🎉</h5>
+                                      <p class="mb-4">
+                                          {{ auth()->user()->role === 'admin' ? 'Sistem berjalan optimal. Anda memiliki kendali penuh atas data medis dan inventaris obat hari ini.' : 'Siap melayani siswa hari ini? Tetap teliti dalam pencatatan rekam medis ya!' }}
+                                      </p>
+                                      <a href="javascript:;" class="btn btn-sm btn-outline-primary">Lihat Laporan Terbaru</a>
+                                  </div>
+                              </div>
+                              <div class="col-sm-5 text-center text-sm-left">
+                                  <div class="card-body pb-0 px-0 px-md-4">
+                                      <img src="{{ asset('assets/backend/img/illustrations/man-with-laptop-light.png') }}" height="140" alt="View Badge User" />
+                                  </div>
+                              </div>
+                          </div>
                       </div>
-                      <div class="col-sm-5 text-center text-sm-left">
-                        <div class="card-body pb-0 px-0 px-md-4">
-                          <img src="{{ asset('assets/backend/img/illustrations/man-with-laptop-light.png') }}" height="140" alt="View Badge User" />
-                        </div>
-                      </div>
-                    </div>
                   </div>
-                </div>
 
-                <div class="col-lg-4 col-md-4 col-6 mb-4">
-                  <div class="card">
-                    <div class="card-body">
-                      <div class="card-title d-flex align-items-start justify-content-between">
-                        <div class="avatar flex-shrink-0">
-                          <span class="badge bg-label-primary p-2"><i class="bx bx-plus-medical text-primary"></i></span>
-                        </div>
+                  {{-- Card 1: Total Rekam Medis --}}
+                  <div class="col-lg-4 col-md-4 col-6 mb-4">
+                      <div class="card">
+                          <div class="card-body">
+                              <div class="card-title d-flex align-items-start justify-content-between">
+                                  <div class="avatar flex-shrink-0">
+                                      <span class="badge bg-label-primary p-2"><i class="bx bx-plus-medical text-primary"></i></span>
+                                  </div>
+                              </div>
+                              <span class="fw-semibold d-block mb-1">Total Rekam Medis</span>
+                              <h3 class="card-title mb-2">{{ $jumlahRekamMedis }}</h3>
+                              <small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> Data Tersimpan</small>
+                          </div>
                       </div>
-                      <span class="fw-semibold d-block mb-1">Total Rekam Medis</span>
-                      <h3 class="card-title mb-2">{{ $jumlahRekamMedis }}</h3>
-                      <small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> Data Tersimpan</small>
-                    </div>
                   </div>
-                </div>
 
-                @if(auth()->user()->role === 'admin')
-                <div class="col-lg-4 col-md-4 col-6 mb-4">
-                  <div class="card">
-                    <div class="card-body">
-                      <div class="card-title d-flex align-items-start justify-content-between">
-                        <div class="avatar flex-shrink-0">
-                          <span class="badge bg-label-info p-2"><i class="bx bx-user-voice text-info"></i></span>
-                        </div>
+                  {{-- Card 2: DINAMIS (Petugas atau Siswa) --}}
+                  <div class="col-lg-4 col-md-4 col-6 mb-4">
+                      <div class="card">
+                          <div class="card-body">
+                              <div class="card-title d-flex align-items-start justify-content-between">
+                                  <div class="avatar flex-shrink-0">
+                                      @if(auth()->user()->role === 'admin')
+                                          <span class="badge bg-label-info p-2"><i class="bx bx-user-voice text-info"></i></span>
+                                      @else
+                                          <span class="badge bg-label-success p-2"><i class="bx bx-group text-success"></i></span>
+                                      @endif
+                                  </div>
+                              </div>
+                              
+                              @if(auth()->user()->role === 'admin')
+                                  <span class="fw-semibold d-block mb-1">Total Petugas</span>
+                                  <h3 class="card-title mb-2">{{ $jumlahPetugas }}</h3>
+                                  <small class="text-muted">Aktif dalam sistem</small>
+                              @else
+                                  <span class="fw-semibold d-block mb-1">Total Siswa Terdaftar</span>
+                                  <h3 class="card-title mb-2">{{ $jumlahSiswa }}</h3>
+                                  <small class="text-muted">Target layanan UKS</small>
+                              @endif
+                          </div>
                       </div>
-                      <span class="fw-semibold d-block mb-1">Total Petugas</span>
-                      <h3 class="card-title mb-2">{{ $jumlahUser }}</h3>
-                      <small class="text-muted">Aktif dalam sistem</small>
-                    </div>
                   </div>
-                </div>
-                @endif
 
-                <div class="col-lg-4 col-md-4 col-12 mb-4">
-                  <div class="card">
-                    <div class="card-body">
-                      <div class="card-title d-flex align-items-start justify-content-between">
-                        <div class="avatar flex-shrink-0">
-                          <span class="badge bg-label-warning p-2"><i class="bx bx-package text-warning"></i></span>
-                        </div>
+                  {{-- Card 3: Jenis Obat --}}
+                  <div class="col-lg-4 col-md-4 col-12 mb-4">
+                      <div class="card">
+                          <div class="card-body">
+                              <div class="card-title d-flex align-items-start justify-content-between">
+                                  <div class="avatar flex-shrink-0">
+                                      <span class="badge bg-label-warning p-2"><i class="bx bx-package text-warning"></i></span>
+                                  </div>
+                              </div>
+                              <span class="fw-semibold d-block mb-1">Jenis Obat</span>
+                              <h3 class="card-title mb-2">{{ $stokObatChart->count() }}</h3>
+                              <small class="text-muted">Dalam Inventaris</small>
+                          </div>
                       </div>
-                      <span class="fw-semibold d-block mb-1">Jenis Obat</span>
-                      <h3 class="card-title mb-2">{{ $stokObatChart->count() }}</h3>
-                      <small class="text-muted">Dalam Inventaris</small>
-                    </div>
                   </div>
-                </div>
               </div>
 
               <div class="row">
@@ -128,24 +141,40 @@
                     </div>
                     <div class="card-body">
                       <ul class="p-0 m-0">
-                        @foreach($stokObatChart->where('stok', '<', 15)->take(5) as $obat)
-                        <li class="d-flex mb-4 pb-1">
-                          <div class="avatar flex-shrink-0 me-3">
-                            <span class="avatar-initial rounded bg-label-{{ $obat->stok < 10 ? 'danger' : 'warning' }}">
-                              <i class="bx bx-capsule"></i>
-                            </span>
-                          </div>
-                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                            <div class="me-2">
-                              <h6 class="mb-0">{{ $obat->nama_obat }}</h6>
-                              <small class="text-muted">Segera Restock</small>
+                        @php
+                          $stokRendah = $stokObatChart->where('stok', '<', 15)->take(5);
+                        @endphp
+
+                        @forelse($stokRendah as $obat)
+                          <li class="d-flex mb-4 pb-1">
+                            <div class="avatar flex-shrink-0 me-3">
+                              {{-- Warna otomatis: <10 Merah, 10-15 Kuning --}}
+                              <span class="avatar-initial rounded bg-label-{{ $obat->stok < 10 ? 'danger' : 'warning' }}">
+                                <i class="bx bx-capsule"></i>
+                              </span>
                             </div>
-                            <div class="user-progress">
-                              <small class="fw-semibold text-{{ $obat->stok < 10 ? 'danger' : 'warning' }}">{{ $obat->stok }}</small>
+                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                              <div class="me-2">
+                                <h6 class="mb-0">{{ $obat->nama_obat }}</h6>
+                                <small class="text-muted">Stok menipis</small>
+                              </div>
+                              <div class="user-progress">
+                                <small class="fw-semibold text-{{ $obat->stok < 10 ? 'danger' : 'warning' }}">{{ $obat->stok }}</small>
+                              </div>
                             </div>
+                          </li>
+                        @empty
+                          {{-- Tampilan pas stok beneran aman semua --}}
+                          <div class="text-center py-5">
+                            <div class="avatar avatar-md mx-auto mb-2">
+                              <span class="avatar-initial rounded-circle bg-label-success">
+                                <i class="bx bx-check-double fs-2"></i>
+                              </span>
+                            </div>
+                            <h6 class="mb-0">Semua Stok Aman</h6>
+                            <small class="text-muted">Tidak ada obat di bawah limit.</small>
                           </div>
-                        </li>
-                        @endforeach
+                        @endforelse
                       </ul>
                     </div>
                   </div>

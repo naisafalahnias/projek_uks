@@ -15,6 +15,25 @@ class Siswa extends Model
         return $this->belongsTo(Kelas::class);
     }
 
+    /**
+     * RELASI PETUGAS INPUT
+     * Ini untuk memanggil siapa Admin/Petugas yang menginput data ini.
+     * Karena kolom 'user_id' ada di tabel 'siswas'
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * RELASI AKUN LOGIN SISWA
+     * Jika kamu ingin tahu akun login (role siswa) milik siswa ini
+     */
+    public function akun()
+    {
+        return $this->hasOne(User::class, 'siswa_id');
+    }
+
     public function rekam_medis(){
         return $this->hasMany(RekamMedis::class);
     }
@@ -23,11 +42,7 @@ class Siswa extends Model
      * Balikan Relasi: Satu profil siswa punya satu akun login (User)
      * Kita kasih tahu Laravel kalau foreign key-nya ada di tabel 'users' kolom 'siswa_id'
      */
-    public function user()
-    {
-        return $this->hasOne(User::class, 'siswa_id');
-    }
-
+    
     public function getUsiaAttribute()
     {
         return $this->tanggal_lahir
