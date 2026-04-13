@@ -104,29 +104,39 @@ class RekamMedisController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'tanggal' => 'required|date',
-            'keluhan' => 'required',
+            'siswa_id' => 'required', // Tambahkan ini agar siswa_id bisa diupdate
+            'tanggal'  => 'required|date',
+            'keluhan'  => 'required',
             'tindakan' => 'required',
-            'status' => 'required',
-            'jumlah' => 'array',
+            'status'   => 'required',
+            'jumlah'   => 'array',
         ]);
 
         $rekam_medis = RekamMedis::findOrFail($id);
 
-        // update rekam medis utama
+        // Update rekam medis utama termasuk siswa_id
         $rekam_medis->update([
-            'tanggal' => $request->tanggal,
-            'keluhan' => $request->keluhan,
+            'siswa_id' => $request->siswa_id, // Masukkan siswa_id ke sini
+            'tanggal'  => $request->tanggal,
+            'keluhan'  => $request->keluhan,
             'tindakan' => $request->tindakan,
-            'status' => $request->status,
+            'status'   => $request->status,
         ]);
 
-        // 🔥 UPDATE JUMLAH OBAT
+        // Update jumlah obat (tetap seperti kode kamu)
         if ($request->has('jumlah')) {
             foreach ($request->jumlah as $rmObatId => $jumlah) {
                 RekamMedisObat::where('id', $rmObatId)
                     ->update(['jumlah' => $jumlah]);
             }
+        }
+
+        // Jika request datang dari API (Flutter)
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data rekam medis berhasil diperbarui'
+            ]);
         }
 
         return redirect()

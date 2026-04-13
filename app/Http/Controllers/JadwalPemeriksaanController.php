@@ -129,7 +129,7 @@ class JadwalPemeriksaanController extends Controller
     {
         $awal  = $request->input('tanggal_awal');
         $akhir = $request->input('tanggal_akhir');
-
+    
         $jadwal = JadwalPemeriksaan::with(['kelas', 'user'])
             ->whereBetween('tanggal', [$awal, $akhir])
             ->get();

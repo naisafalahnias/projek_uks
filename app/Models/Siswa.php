@@ -9,10 +9,11 @@ class Siswa extends Model
 {
     // Hapus 'user_id' dari sini karena kita pakainya 'siswa_id' di tabel users
     public $fillable = ['nama','tanggal_lahir', 'kelas_id', 'jenis_kelamin','user_id'];
+    protected $table = 'siswas';
 
     public function kelas()
     {
-        return $this->belongsTo(Kelas::class);
+        return $this->belongsTo(Kelas::class, 'kelas_id', 'id');
     }
 
     /**

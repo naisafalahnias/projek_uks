@@ -4,7 +4,7 @@
     <div class="container position-relative d-flex align-items-center justify-content-between">
 
       <a href="{{ url('/') }}" class="logo d-flex align-items-center me-auto">
-        <img src="{{ asset('assets/frontend/img/logo-1.png') }}" alt="">
+        <img src="{{ asset('assets/frontend/img/logo.png') }}" alt="">
       </a>
 
       <nav id="navmenu" class="navmenu">
